@@ -1,0 +1,11 @@
+{
+  "id": "e6439243-a6f4-4ccc-b7a9-2c33ac74384f",
+  "employeeId": null,
+  "name": "Carol Williams",
+  "email": "carol.williams@company.com",
+  "role": "Designer",
+  "department": "Design",
+  "status": "ACTIVE",
+  "createdAt": "2026-03-24T05:22:10.895785+00:00",
+  "updatedAt": "2026-03-24T05:22:10.931372+00:00"
+}

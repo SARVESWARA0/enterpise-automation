@@ -1,0 +1,165 @@
+{
+  "id": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+  "type": "employee_onboarding",
+  "entityId": "c303f741-efa4-4d6e-82f1-1d00435ae206",
+  "triggerEvent": "employee_created",
+  "inputData": {
+    "employeeId": "c303f741-efa4-4d6e-82f1-1d00435ae206",
+    "name": "SARVESWARA",
+    "email": "sarveswara.it23@bitsathy.ac.in",
+    "role": "software enginner intern",
+    "department": "Engineering",
+    "triggerEvent": "employee_created"
+  },
+  "status": "RUNNING",
+  "plan": [
+    {
+      "id": "70eb13fb-2135-452b-93a9-858d73f07a7a",
+      "stepName": "Create email account",
+      "stepDescription": "Use create_email_account_tool with name='SARVESWARA' and email='sarveswara.it23@bitsathy.ac.in'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_email_account_tool",
+      "dependencyOrder": 0,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "7a2d1ad9-3101-496e-8747-5332844c4ed3",
+      "stepName": "Create JIRA access",
+      "stepDescription": "Use create_jira_account_tool to grant JIRA access for employee SARVESWARA",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_account_tool",
+      "dependencyOrder": 1,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "0a5567db-2a81-4d47-a727-a9e5268a1e13",
+      "stepName": "Create HR record",
+      "stepDescription": "Use create_hr_account_tool to create HR record for SARVESWARA with role='Software Engineer Intern' and department='Engineering'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_hr_account_tool",
+      "dependencyOrder": 2,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "d61503be-ac3f-4483-8e34-580fcc5f2104",
+      "stepName": "Assign buddy",
+      "stepDescription": "Use assign_buddy_tool to assign a mentor or buddy for SARVESWARA",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "assign_buddy_tool",
+      "dependencyOrder": 3,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "fa36912d-cc53-4bfd-8303-a5f64a5706bd",
+      "stepName": "Schedule orientation",
+      "stepDescription": "Use create_calendar_event to schedule onboarding orientation for SARVESWARA",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_calendar_event",
+      "dependencyOrder": 4,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "356aaef2-07e4-4815-b766-e8c4f7fdf740",
+      "stepName": "Send onboarding email",
+      "stepDescription": "Use send_onboarding_email_tool to send onboarding instructions and details to SARVESWARA",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "send_onboarding_email_tool",
+      "dependencyOrder": 5,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    }
+  ],
+  "steps": [
+    {
+      "id": "70eb13fb-2135-452b-93a9-858d73f07a7a",
+      "stepName": "Create email account",
+      "stepDescription": "Use create_email_account_tool with name='SARVESWARA' and email='sarveswara.it23@bitsathy.ac.in'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_email_account_tool",
+      "dependencyOrder": 0,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "7a2d1ad9-3101-496e-8747-5332844c4ed3",
+      "stepName": "Create JIRA access",
+      "stepDescription": "Use create_jira_account_tool to grant JIRA access for employee SARVESWARA",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_account_tool",
+      "dependencyOrder": 1,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "0a5567db-2a81-4d47-a727-a9e5268a1e13",
+      "stepName": "Create HR record",
+      "stepDescription": "Use create_hr_account_tool to create HR record for SARVESWARA with role='Software Engineer Intern' and department='Engineering'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_hr_account_tool",
+      "dependencyOrder": 2,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "d61503be-ac3f-4483-8e34-580fcc5f2104",
+      "stepName": "Assign buddy",
+      "stepDescription": "Use assign_buddy_tool to assign a mentor or buddy for SARVESWARA",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "assign_buddy_tool",
+      "dependencyOrder": 3,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "fa36912d-cc53-4bfd-8303-a5f64a5706bd",
+      "stepName": "Schedule orientation",
+      "stepDescription": "Use create_calendar_event to schedule onboarding orientation for SARVESWARA",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_calendar_event",
+      "dependencyOrder": 4,
+      "fallbackBehavior": "retry",
+      "status": "RUNNING",
+      "retryCount": 0
+    },
+    {
+      "id": "356aaef2-07e4-4815-b766-e8c4f7fdf740",
+      "stepName": "Send onboarding email",
+      "stepDescription": "Use send_onboarding_email_tool to send onboarding instructions and details to SARVESWARA",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "send_onboarding_email_tool",
+      "dependencyOrder": 5,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    }
+  ],
+  "createdAt": "2026-03-24T08:21:13.487213+00:00",
+  "updatedAt": "2026-03-24T08:22:03.717722+00:00"
+}

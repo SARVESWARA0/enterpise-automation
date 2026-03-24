@@ -1,0 +1,175 @@
+[
+  {
+    "type": "workflow:start",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\ude80 Starting: Onboard new employee: SARVESWARA (software enginner intern in Engineering). Email: sarveswara.it23@bitsathy.ac.in.",
+    "timestamp": "2026-03-24T08:21:13.843632+00:00"
+  },
+  {
+    "type": "chat:agent_assigned",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "InterpreterAgent",
+    "message": "\ud83d\udccb Interpreting workflow intent...",
+    "timestamp": "2026-03-24T08:21:13.857146+00:00"
+  },
+  {
+    "type": "chat:message",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "InterpreterAgent",
+    "message": "[\n  {\n    \"stepName\": \"Create email account\",\n    \"stepDescription\": \"Use create_email_account_tool with name='SARVESWARA' and email='sarveswara.it23@bitsathy.ac.in'\",\n    \"stepType\": \"action\",\n    \"assignedAgent\": \"ExecutionAgent\",\n    \"toolName\": \"create_email_account_tool\",\n    \"dependencyOrder\": 0,\n    \"fallbackBehavior\": \"retry\"\n  },\n  {\n    \"stepName\": \"Create JIRA access\",\n    \"stepDescription\": \"Use create_jira_account_tool to grant JIRA access for employee SARVESWARA\",\n    \"stepType\": \"action\",\n    \"assignedAgent\": \"ExecutionAgent\",\n    \"toolName\": \"create_jira_account_tool\",\n    \"dependencyOrder\": 1,\n    \"fallbackBehavior\": \"retry\"\n  },\n  {\n    \"stepName\": \"Create HR record\",\n    \"stepDescription\": \"Use create_hr_account_tool to create HR record for SARVESWARA with role='Software",
+    "timestamp": "2026-03-24T08:21:21.574719+00:00"
+  },
+  {
+    "type": "chat:plan_generated",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "InterpreterAgent",
+    "message": "\u2705 Generated 6-step plan.",
+    "data": {
+      "steps": [
+        {
+          "stepName": "Create email account",
+          "stepDescription": "Use create_email_account_tool with name='SARVESWARA' and email='sarveswara.it23@bitsathy.ac.in'",
+          "stepType": "action",
+          "assignedAgent": "ExecutionAgent"
+        },
+        {
+          "stepName": "Create JIRA access",
+          "stepDescription": "Use create_jira_account_tool to grant JIRA access for employee SARVESWARA",
+          "stepType": "action",
+          "assignedAgent": "ExecutionAgent"
+        },
+        {
+          "stepName": "Create HR record",
+          "stepDescription": "Use create_hr_account_tool to create HR record for SARVESWARA with role='Software Engineer Intern' and department='Engineering'",
+          "stepType": "action",
+          "assignedAgent": "ExecutionAgent"
+        },
+        {
+          "stepName": "Assign buddy",
+          "stepDescription": "Use assign_buddy_tool to assign a mentor or buddy for SARVESWARA",
+          "stepType": "action",
+          "assignedAgent": "ExecutionAgent"
+        },
+        {
+          "stepName": "Schedule orientation",
+          "stepDescription": "Use create_calendar_event to schedule onboarding orientation for SARVESWARA",
+          "stepType": "action",
+          "assignedAgent": "ExecutionAgent"
+        },
+        {
+          "stepName": "Send onboarding email",
+          "stepDescription": "Use send_onboarding_email_tool to send onboarding instructions and details to SARVESWARA",
+          "stepType": "action",
+          "assignedAgent": "ExecutionAgent"
+        }
+      ]
+    },
+    "timestamp": "2026-03-24T08:21:21.575920+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 1/6: Create email account",
+    "timestamp": "2026-03-24T08:21:21.610384+00:00"
+  },
+  {
+    "type": "chat:step_complete",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "ExecutionAgent",
+    "message": "\ud83c\udf89 Completed: Create email account",
+    "timestamp": "2026-03-24T08:21:30.258377+00:00"
+  },
+  {
+    "type": "chat:agent_assigned",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "HealthMonitorAgent",
+    "message": "\ud83d\udcca Checking workflow health...",
+    "timestamp": "2026-03-24T08:21:30.266916+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 2/6: Create JIRA access",
+    "timestamp": "2026-03-24T08:21:32.115405+00:00"
+  },
+  {
+    "type": "chat:step_complete",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "ExecutionAgent",
+    "message": "\ud83c\udf89 Completed: Create JIRA access",
+    "timestamp": "2026-03-24T08:21:41.048922+00:00"
+  },
+  {
+    "type": "chat:agent_assigned",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "HealthMonitorAgent",
+    "message": "\ud83d\udcca Checking workflow health...",
+    "timestamp": "2026-03-24T08:21:41.050634+00:00"
+  },
+  {
+    "type": "chat:message",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "HealthMonitorAgent",
+    "message": "\u2705 Health: HEALTHY \u2014 ",
+    "timestamp": "2026-03-24T08:21:42.582275+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 3/6: Create HR record",
+    "timestamp": "2026-03-24T08:21:42.589635+00:00"
+  },
+  {
+    "type": "chat:step_complete",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "ExecutionAgent",
+    "message": "\ud83c\udf89 Completed: Create HR record",
+    "timestamp": "2026-03-24T08:21:51.582855+00:00"
+  },
+  {
+    "type": "chat:agent_assigned",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "HealthMonitorAgent",
+    "message": "\ud83d\udcca Checking workflow health...",
+    "timestamp": "2026-03-24T08:21:51.585236+00:00"
+  },
+  {
+    "type": "chat:error",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "HealthMonitorAgent",
+    "message": "Health check failed: Expecting property name enclosed in double quotes: line 2 column 3 (char 4)",
+    "timestamp": "2026-03-24T08:21:53.209296+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 4/6: Assign buddy",
+    "timestamp": "2026-03-24T08:21:53.211515+00:00"
+  },
+  {
+    "type": "chat:step_complete",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "ExecutionAgent",
+    "message": "\ud83c\udf89 Completed: Assign buddy",
+    "timestamp": "2026-03-24T08:22:01.866997+00:00"
+  },
+  {
+    "type": "chat:agent_assigned",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "HealthMonitorAgent",
+    "message": "\ud83d\udcca Checking workflow health...",
+    "timestamp": "2026-03-24T08:22:01.871503+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "d55bd83f-86e2-4f33-8c1d-8b5e5c8c8469",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 5/6: Schedule orientation",
+    "timestamp": "2026-03-24T08:22:03.690226+00:00"
+  }
+]

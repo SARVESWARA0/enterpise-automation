@@ -1,0 +1,111 @@
+{
+  "id": "5844a26f-8688-4cf5-ad75-5a77c7f1ee32",
+  "type": "employee_onboarding",
+  "entityId": "05edf824-4873-4a1d-b967-6dd60ec15a25",
+  "triggerEvent": "employee_created",
+  "inputData": {
+    "employeeId": "05edf824-4873-4a1d-b967-6dd60ec15a25",
+    "name": "MONISH V",
+    "email": "monish.cs23@bitsathy.ac.in",
+    "role": "intern",
+    "department": "Operations",
+    "triggerEvent": "employee_created"
+  },
+  "status": "COMPLETED",
+  "plan": [
+    {
+      "id": "748d59db-003e-42f9-b996-42b4f1723210",
+      "stepName": "Create email account for new employee",
+      "stepDescription": "Use create_email_account with employee_name='MONISH V', employee_email='monish.cs23@bitsathy.ac.in', department='Operations', role='intern'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0
+    },
+    {
+      "id": "eec4bbd0-5f48-4aac-a85d-3208f5584afd",
+      "stepName": "Send onboarding email to new employee",
+      "stepDescription": "Use send_email with to='monish.cs23@bitsathy.ac.in', subject='Welcome to the Team', body='Dear MONISH V, your onboarding is complete. Welcome aboard!'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 1
+    },
+    {
+      "id": "7500538f-d469-4fa7-a26b-a859535a1324",
+      "stepName": "Create JIRA onboarding task",
+      "stepDescription": "Use create_jira_task with title='Onboard MONISH V', description='Complete onboarding process for MONISH V, intern in Operations', assignee='HR team'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 2
+    },
+    {
+      "id": "fd5c05a3-59e0-4ade-beab-b41891979758",
+      "stepName": "Schedule onboarding meeting",
+      "stepDescription": "Use create_calendar_event with title='Onboarding Meeting for MONISH V', date='TBD', time='TBD', participants=['HR team', 'Operations Manager']",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 3
+    },
+    {
+      "id": "13fb83ff-200c-4018-bbd8-7bd97d57061d",
+      "stepName": "Update employee HR records",
+      "stepDescription": "Use update_employee_status with employee_email='monish.cs23@bitsathy.ac.in', status='ONBOARDING'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 4
+    }
+  ],
+  "steps": [
+    {
+      "id": "748d59db-003e-42f9-b996-42b4f1723210",
+      "stepName": "Create email account for new employee",
+      "stepDescription": "Use create_email_account with employee_name='MONISH V', employee_email='monish.cs23@bitsathy.ac.in', department='Operations', role='intern'",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0
+    },
+    {
+      "id": "eec4bbd0-5f48-4aac-a85d-3208f5584afd",
+      "stepName": "Send onboarding email to new employee",
+      "stepDescription": "Use send_email with to='monish.cs23@bitsathy.ac.in', subject='Welcome to the Team', body='Dear MONISH V, your onboarding is complete. Welcome aboard!'",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 1
+    },
+    {
+      "id": "7500538f-d469-4fa7-a26b-a859535a1324",
+      "stepName": "Create JIRA onboarding task",
+      "stepDescription": "Use create_jira_task with title='Onboard MONISH V', description='Complete onboarding process for MONISH V, intern in Operations', assignee='HR team'",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 2
+    },
+    {
+      "id": "fd5c05a3-59e0-4ade-beab-b41891979758",
+      "stepName": "Schedule onboarding meeting",
+      "stepDescription": "Use create_calendar_event with title='Onboarding Meeting for MONISH V', date='TBD', time='TBD', participants=['HR team', 'Operations Manager']",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 3
+    },
+    {
+      "id": "13fb83ff-200c-4018-bbd8-7bd97d57061d",
+      "stepName": "Update employee HR records",
+      "stepDescription": "Use update_employee_status with employee_email='monish.cs23@bitsathy.ac.in', status='ONBOARDING'",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 4
+    }
+  ],
+  "createdAt": "2026-03-24T05:49:54.945922+00:00",
+  "updatedAt": "2026-03-24T05:51:08.681328+00:00"
+}

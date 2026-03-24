@@ -1,0 +1,165 @@
+{
+  "id": "833c3d17-2462-4392-b188-905c0b3eb4ea",
+  "type": "employee_onboarding",
+  "entityId": "9084fab3-fc1b-4057-9921-c81d691e8269",
+  "triggerEvent": "employee_created",
+  "inputData": {
+    "employeeId": "9084fab3-fc1b-4057-9921-c81d691e8269",
+    "name": "sarveswa",
+    "email": "r.m.sarveswara@gmail.com",
+    "role": "intern",
+    "department": "Human Resources",
+    "triggerEvent": "employee_created"
+  },
+  "status": "COMPLETED",
+  "plan": [
+    {
+      "id": "b2c100e5-301f-44b3-8672-3807b127d5be",
+      "stepName": "Create email account for Sarveswa",
+      "stepDescription": "Use create_email_account_tool with name='sarveswa' and email='r.m.sarveswara@gmail.com'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_email_account_tool",
+      "dependencyOrder": 0,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "ff8fa9fc-e384-4501-8283-5d09cf99d520",
+      "stepName": "Create JIRA access for Sarveswa",
+      "stepDescription": "Use create_jira_account_tool with username='sarveswa'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_account_tool",
+      "dependencyOrder": 1,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "fb30fde9-a883-4374-abf0-fdbbb03f6482",
+      "stepName": "Create HR record for Sarveswa",
+      "stepDescription": "Use create_hr_account_tool with name='sarveswa', role='Intern', department='Human Resources'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_hr_account_tool",
+      "dependencyOrder": 2,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "913c951a-cfa7-4096-b4ab-3642093365a0",
+      "stepName": "Assign a buddy to Sarveswa",
+      "stepDescription": "Use assign_buddy_tool with employeeName='sarveswa'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "assign_buddy_tool",
+      "dependencyOrder": 3,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "ef960e45-3210-4797-b437-358c4c851ecf",
+      "stepName": "Schedule orientation meeting for Sarveswa",
+      "stepDescription": "Use create_calendar_event with participant='sarveswa' and purpose='Orientation'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_calendar_event",
+      "dependencyOrder": 4,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "5c0aa154-5ce5-4f21-a2a3-055efda6bf60",
+      "stepName": "Send onboarding email to Sarveswa",
+      "stepDescription": "Use send_onboarding_email_tool with email='r.m.sarveswara@gmail.com'",
+      "stepType": "notification",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "send_onboarding_email_tool",
+      "dependencyOrder": 5,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    }
+  ],
+  "steps": [
+    {
+      "id": "b2c100e5-301f-44b3-8672-3807b127d5be",
+      "stepName": "Create email account for Sarveswa",
+      "stepDescription": "Use create_email_account_tool with name='sarveswa' and email='r.m.sarveswara@gmail.com'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_email_account_tool",
+      "dependencyOrder": 0,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "ff8fa9fc-e384-4501-8283-5d09cf99d520",
+      "stepName": "Create JIRA access for Sarveswa",
+      "stepDescription": "Use create_jira_account_tool with username='sarveswa'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_account_tool",
+      "dependencyOrder": 1,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "fb30fde9-a883-4374-abf0-fdbbb03f6482",
+      "stepName": "Create HR record for Sarveswa",
+      "stepDescription": "Use create_hr_account_tool with name='sarveswa', role='Intern', department='Human Resources'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_hr_account_tool",
+      "dependencyOrder": 2,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "913c951a-cfa7-4096-b4ab-3642093365a0",
+      "stepName": "Assign a buddy to Sarveswa",
+      "stepDescription": "Use assign_buddy_tool with employeeName='sarveswa'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "assign_buddy_tool",
+      "dependencyOrder": 3,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "ef960e45-3210-4797-b437-358c4c851ecf",
+      "stepName": "Schedule orientation meeting for Sarveswa",
+      "stepDescription": "Use create_calendar_event with participant='sarveswa' and purpose='Orientation'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_calendar_event",
+      "dependencyOrder": 4,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "5c0aa154-5ce5-4f21-a2a3-055efda6bf60",
+      "stepName": "Send onboarding email to Sarveswa",
+      "stepDescription": "Use send_onboarding_email_tool with email='r.m.sarveswara@gmail.com'",
+      "stepType": "notification",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "send_onboarding_email_tool",
+      "dependencyOrder": 5,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    }
+  ],
+  "createdAt": "2026-03-24T06:17:22.916622+00:00",
+  "updatedAt": "2026-03-24T06:19:20.919308+00:00"
+}

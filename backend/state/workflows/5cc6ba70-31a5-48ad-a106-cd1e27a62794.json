@@ -1,0 +1,165 @@
+{
+  "id": "5cc6ba70-31a5-48ad-a106-cd1e27a62794",
+  "type": "employee_onboarding",
+  "entityId": "e25586a2-9259-4dc2-be57-df227f1b19c2",
+  "triggerEvent": "employee_created",
+  "inputData": {
+    "employeeId": "e25586a2-9259-4dc2-be57-df227f1b19c2",
+    "name": "sas",
+    "email": "r.m.sarveswara@gmail.com",
+    "role": "inr",
+    "department": "Design",
+    "triggerEvent": "employee_created"
+  },
+  "status": "COMPLETED",
+  "plan": [
+    {
+      "id": "7c4b6506-6fb3-4e6a-8bd3-2afc1d7c39d7",
+      "stepName": "Create email account",
+      "stepDescription": "Use create_email_account_tool with name='sas' and email='r.m.sarveswara@gmail.com'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_email_account_tool",
+      "dependencyOrder": 0,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "6d298829-c2b5-434d-b093-97547601b91c",
+      "stepName": "Create JIRA access",
+      "stepDescription": "Use create_jira_account_tool for employee with email='r.m.sarveswara@gmail.com'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_account_tool",
+      "dependencyOrder": 1,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "b8f11981-901a-47f8-acec-e2aebd002457",
+      "stepName": "Create HR record",
+      "stepDescription": "Use create_hr_account_tool to add employee named 'sas' in 'Design' department",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_hr_account_tool",
+      "dependencyOrder": 2,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "18944286-ea76-4e43-b1cc-e55e6886f294",
+      "stepName": "Assign buddy/mentor",
+      "stepDescription": "Use assign_buddy_tool to assign a mentor to 'sas' in 'Design' department",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "assign_buddy_tool",
+      "dependencyOrder": 3,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "b5acbef8-111a-4b6f-8828-a329861bbbfb",
+      "stepName": "Schedule onboarding orientation",
+      "stepDescription": "Use create_calendar_event to schedule onboarding session for 'sas' with relevant team members",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_calendar_event",
+      "dependencyOrder": 4,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    },
+    {
+      "id": "57932ac0-7033-4762-9e36-b580e9d6bf68",
+      "stepName": "Send onboarding email",
+      "stepDescription": "Use send_onboarding_email_tool to send the onboarding details to 'sas' email 'r.m.sarveswara@gmail.com'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "send_onboarding_email_tool",
+      "dependencyOrder": 5,
+      "fallbackBehavior": "retry",
+      "status": "PENDING",
+      "retryCount": 0
+    }
+  ],
+  "steps": [
+    {
+      "id": "7c4b6506-6fb3-4e6a-8bd3-2afc1d7c39d7",
+      "stepName": "Create email account",
+      "stepDescription": "Use create_email_account_tool with name='sas' and email='r.m.sarveswara@gmail.com'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_email_account_tool",
+      "dependencyOrder": 0,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "6d298829-c2b5-434d-b093-97547601b91c",
+      "stepName": "Create JIRA access",
+      "stepDescription": "Use create_jira_account_tool for employee with email='r.m.sarveswara@gmail.com'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_account_tool",
+      "dependencyOrder": 1,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "b8f11981-901a-47f8-acec-e2aebd002457",
+      "stepName": "Create HR record",
+      "stepDescription": "Use create_hr_account_tool to add employee named 'sas' in 'Design' department",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_hr_account_tool",
+      "dependencyOrder": 2,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "18944286-ea76-4e43-b1cc-e55e6886f294",
+      "stepName": "Assign buddy/mentor",
+      "stepDescription": "Use assign_buddy_tool to assign a mentor to 'sas' in 'Design' department",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "assign_buddy_tool",
+      "dependencyOrder": 3,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "b5acbef8-111a-4b6f-8828-a329861bbbfb",
+      "stepName": "Schedule onboarding orientation",
+      "stepDescription": "Use create_calendar_event to schedule onboarding session for 'sas' with relevant team members",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_calendar_event",
+      "dependencyOrder": 4,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    },
+    {
+      "id": "57932ac0-7033-4762-9e36-b580e9d6bf68",
+      "stepName": "Send onboarding email",
+      "stepDescription": "Use send_onboarding_email_tool to send the onboarding details to 'sas' email 'r.m.sarveswara@gmail.com'",
+      "stepType": "action",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "send_onboarding_email_tool",
+      "dependencyOrder": 5,
+      "fallbackBehavior": "retry",
+      "status": "COMPLETED",
+      "retryCount": 0
+    }
+  ],
+  "createdAt": "2026-03-24T16:04:18.777729+00:00",
+  "updatedAt": "2026-03-24T16:06:14.428052+00:00"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "bc53d7b6-7f99-4af8-ae6c-1d75e3fd03eb",
+  "employeeId": null,
+  "name": "Jane Doe",
+  "email": "jane.doe@example.com",
+  "role": "Software Engineer",
+  "department": "Engineering",
+  "status": "ONBOARDING",
+  "createdAt": "2026-03-24T05:22:44.219481+00:00",
+  "updatedAt": "2026-03-24T05:22:44.281441+00:00"
+}

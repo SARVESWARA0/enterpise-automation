@@ -1,0 +1,64 @@
+[
+  {
+    "decision": "workflow_started",
+    "reason": "Goal: Onboard new employee: Jane Doe (Software Engineer in Engineering). Email: jane.doe@example.com.",
+    "actionTaken": "Orchestrator initialized",
+    "agentName": "Orchestrator",
+    "status": "running",
+    "id": "c6994b20-db0c-4520-82d1-152a9a1c2970",
+    "workflowId": "6e673c9e-c873-40dd-b662-4c579b360d30",
+    "timestamp": "2026-03-24T05:22:44.662292+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Created email: jane.doe@example.com",
+    "actionTaken": "create_email_account",
+    "agentName": "ExecutionAgent",
+    "toolName": "create_email_account",
+    "status": "completed",
+    "id": "37da79de-ae8e-4ebc-9e38-fd8940fda669",
+    "workflowId": "6e673c9e-c873-40dd-b662-4c579b360d30",
+    "timestamp": "2026-03-24T05:23:02.676702+00:00"
+  },
+  {
+    "decision": "completed",
+    "reason": "Step 'Create Email Account for Jane Doe' succeeded",
+    "actionTaken": "Step finished",
+    "agentName": "ExecutionAgent",
+    "status": "completed",
+    "id": "36ed00ad-0f57-4eea-b80d-7bac3ce02075",
+    "workflowId": "6e673c9e-c873-40dd-b662-4c579b360d30",
+    "timestamp": "2026-03-24T05:23:07.679096+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Email to jane.doe@example.com: Welcome to the Company!",
+    "actionTaken": "send_email",
+    "agentName": "ExecutionAgent",
+    "toolName": "send_email",
+    "status": "completed",
+    "id": "dccd07e6-3ae3-4371-8996-ffff202c40f6",
+    "workflowId": "6e673c9e-c873-40dd-b662-4c579b360d30",
+    "timestamp": "2026-03-24T05:23:17.677604+00:00"
+  },
+  {
+    "decision": "completed",
+    "reason": "Step 'Send Welcome Email to Jane Doe' succeeded",
+    "actionTaken": "Step finished",
+    "agentName": "ExecutionAgent",
+    "status": "completed",
+    "id": "24fbcd91-07f3-443a-b064-9a64af40eafc",
+    "workflowId": "6e673c9e-c873-40dd-b662-4c579b360d30",
+    "timestamp": "2026-03-24T05:23:23.023227+00:00"
+  },
+  {
+    "decision": "completed",
+    "reason": "Workflow finished: COMPLETED",
+    "actionTaken": "All 2 steps processed",
+    "agentName": "Orchestrator",
+    "status": "completed",
+    "id": "45ff7dcb-eda7-41c6-a3fc-b086eed15d9f",
+    "workflowId": "6e673c9e-c873-40dd-b662-4c579b360d30",
+    "timestamp": "2026-03-24T05:23:23.094421+00:00"
+  }
+]

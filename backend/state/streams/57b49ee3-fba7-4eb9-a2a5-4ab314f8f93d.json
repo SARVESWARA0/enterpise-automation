@@ -1,0 +1,81 @@
+[
+  {
+    "type": "workflow:start",
+    "workflowId": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\ude80 Starting: Onboard new employee: sarvesw (as in Product). Email: sarveswara.it23@bitsathy.ac.in.",
+    "timestamp": "2026-03-24T05:55:46.453504+00:00"
+  },
+  {
+    "type": "chat:agent_assigned",
+    "workflowId": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+    "agentName": "PlannerAgent",
+    "message": "\ud83d\udccb Planning workflow steps...",
+    "timestamp": "2026-03-24T05:55:46.462807+00:00"
+  },
+  {
+    "type": "chat:message",
+    "workflowId": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+    "agentName": "PlannerAgent",
+    "message": "[\n  {\n    \"stepName\": \"Create email account\",\n    \"stepDescription\": \"Use create_email_account to provision an email with employee_name='sarvesw', employee_email='sarveswara.it23@bitsathy.ac.in', department='Product'.\"\n  },\n  {\n    \"stepName\": \"Send onboarding email\",\n    \"stepDescription\": \"Use send_email to send a welcome email to='sarveswara.it23@bitsathy.ac.in', subject='Welcome to the Company', body='Dear Sarvesw, welcome to the Product department! Please complete your onboarding tasks.'\"\n  }\n]\n",
+    "timestamp": "2026-03-24T05:55:54.006268+00:00"
+  },
+  {
+    "type": "chat:plan_generated",
+    "workflowId": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+    "agentName": "PlannerAgent",
+    "message": "\u2705 Generated 2-step plan.",
+    "data": {
+      "steps": [
+        {
+          "stepName": "Create email account",
+          "stepDescription": "Use create_email_account to provision an email with employee_name='sarvesw', employee_email='sarveswara.it23@bitsathy.ac.in', department='Product'."
+        },
+        {
+          "stepName": "Send onboarding email",
+          "stepDescription": "Use send_email to send a welcome email to='sarveswara.it23@bitsathy.ac.in', subject='Welcome to the Company', body='Dear Sarvesw, welcome to the Product department! Please complete your onboarding tasks.'"
+        }
+      ]
+    },
+    "timestamp": "2026-03-24T05:55:54.020169+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 1/2: Create email account",
+    "timestamp": "2026-03-24T05:55:54.105031+00:00"
+  },
+  {
+    "type": "chat:step_complete",
+    "workflowId": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+    "agentName": "ExecutionAgent",
+    "message": "\ud83c\udf89 Completed: Create email account",
+    "timestamp": "2026-03-24T05:56:17.123777+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 2/2: Send onboarding email",
+    "timestamp": "2026-03-24T05:56:17.131139+00:00"
+  },
+  {
+    "type": "chat:step_complete",
+    "workflowId": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+    "agentName": "ExecutionAgent",
+    "message": "\ud83c\udf89 Completed: Send onboarding email",
+    "timestamp": "2026-03-24T05:56:30.019184+00:00"
+  },
+  {
+    "type": "workflow:complete",
+    "workflowId": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+    "agentName": "Orchestrator",
+    "message": "\ud83c\udf89 Workflow completed",
+    "data": {
+      "totalSteps": 2,
+      "status": "COMPLETED"
+    },
+    "timestamp": "2026-03-24T05:56:30.068949+00:00"
+  }
+]

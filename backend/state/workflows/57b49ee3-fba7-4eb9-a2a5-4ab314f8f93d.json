@@ -1,0 +1,57 @@
+{
+  "id": "57b49ee3-fba7-4eb9-a2a5-4ab314f8f93d",
+  "type": "employee_onboarding",
+  "entityId": "35582df6-408b-4aaa-9e5e-c2ffc4626294",
+  "triggerEvent": "employee_created",
+  "inputData": {
+    "employeeId": "35582df6-408b-4aaa-9e5e-c2ffc4626294",
+    "name": "sarvesw",
+    "email": "sarveswara.it23@bitsathy.ac.in",
+    "role": "as",
+    "department": "Product",
+    "triggerEvent": "employee_created"
+  },
+  "status": "COMPLETED",
+  "plan": [
+    {
+      "id": "213dfd7c-ec8a-463c-8fa4-084ec694209f",
+      "stepName": "Create email account",
+      "stepDescription": "Use create_email_account to provision an email with employee_name='sarvesw', employee_email='sarveswara.it23@bitsathy.ac.in', department='Product'.",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0
+    },
+    {
+      "id": "c640acda-f5fb-49b4-8321-17cb7ec70190",
+      "stepName": "Send onboarding email",
+      "stepDescription": "Use send_email to send a welcome email to='sarveswara.it23@bitsathy.ac.in', subject='Welcome to the Company', body='Dear Sarvesw, welcome to the Product department! Please complete your onboarding tasks.'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 1
+    }
+  ],
+  "steps": [
+    {
+      "id": "213dfd7c-ec8a-463c-8fa4-084ec694209f",
+      "stepName": "Create email account",
+      "stepDescription": "Use create_email_account to provision an email with employee_name='sarvesw', employee_email='sarveswara.it23@bitsathy.ac.in', department='Product'.",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0
+    },
+    {
+      "id": "c640acda-f5fb-49b4-8321-17cb7ec70190",
+      "stepName": "Send onboarding email",
+      "stepDescription": "Use send_email to send a welcome email to='sarveswara.it23@bitsathy.ac.in', subject='Welcome to the Company', body='Dear Sarvesw, welcome to the Product department! Please complete your onboarding tasks.'",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 1
+    }
+  ],
+  "createdAt": "2026-03-24T05:55:46.288562+00:00",
+  "updatedAt": "2026-03-24T05:56:30.067513+00:00"
+}

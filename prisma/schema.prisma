@@ -36,6 +36,7 @@ enum StepStatus {
 
 model Employee {
   id         String         @id @default(uuid())
+  employeeId String?        @map("employee_id")
   name       String
   email      String         @unique
   role       String

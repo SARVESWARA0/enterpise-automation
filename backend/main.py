@@ -24,7 +24,7 @@ from state_manager import (
     get_audit_logs, get_stream_events, get_dashboard_stats,
     seed_employees, append_stream_event,
 )
-from orchestrator import execute_workflow
+from orchestrator.engine import execute_workflow
 
 
 @asynccontextmanager

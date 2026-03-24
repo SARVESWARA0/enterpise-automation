@@ -1,0 +1,12 @@
+{
+  "id": "e25586a2-9259-4dc2-be57-df227f1b19c2",
+  "employeeId": "EMP-5877",
+  "name": "sas",
+  "email": "r.m.sarveswara@gmail.com",
+  "role": "inr",
+  "department": "Design",
+  "status": "ONBOARDING",
+  "createdAt": "2026-03-24T16:04:18.773284+00:00",
+  "updatedAt": "2026-03-24T16:05:25.337988+00:00",
+  "buddy": "Carol Williams"
+}

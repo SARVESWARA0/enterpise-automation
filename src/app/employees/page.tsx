@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation';
 
 interface Employee {
   id: string;
+  employeeId?: string;
   name: string;
   email: string;
   role: string;
   department: string;
   status: string;
   createdAt: string;
+  buddy?: string;
   workflows?: Array<{ id: string; type: string; status: string }>;
 }
 
@@ -76,9 +78,11 @@ export default function EmployeesPage() {
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Employee ID</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th>Department</th>
+                <th>Buddy</th>
                 <th>Status</th>
                 <th>Latest Workflow</th>
                 <th>Created</th>
@@ -88,9 +92,17 @@ export default function EmployeesPage() {
               {employees.map((emp) => (
                 <tr key={emp.id}>
                   <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{emp.name}</td>
+                  <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{emp.employeeId || '—'}</td>
                   <td>{emp.email}</td>
                   <td>{emp.role}</td>
                   <td>{emp.department}</td>
+                  <td>
+                    {emp.buddy ? (
+                      <span style={{ color: 'var(--cyan)' }}>{emp.buddy}</span>
+                    ) : (
+                      <span style={{ color: 'var(--text-muted)' }}>—</span>
+                    )}
+                  </td>
                   <td><span className={`badge badge-${emp.status.toLowerCase()}`}>{emp.status}</span></td>
                   <td>
                     {emp.workflows && emp.workflows.length > 0 ? (

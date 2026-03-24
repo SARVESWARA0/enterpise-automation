@@ -1,0 +1,11 @@
+{
+  "id": "0a3ca80a-e7b4-4620-894c-f423386c5473",
+  "employeeId": null,
+  "name": "Alice Johnson",
+  "email": "alice.johnson@company.com",
+  "role": "Software Engineer",
+  "department": "Engineering",
+  "status": "ACTIVE",
+  "createdAt": "2026-03-24T05:22:10.804439+00:00",
+  "updatedAt": "2026-03-24T05:22:10.850420+00:00"
+}

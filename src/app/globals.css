@@ -16,8 +16,14 @@
   --warning: #f59e0b;
   --danger: #ef4444;
   --info: #3b82f6;
+  --purple: #a78bfa;
+  --cyan: #22d3ee;
+  --teal: #06b6d4;
+  --orange: #f97316;
   --gradient-start: #6366f1;
   --gradient-end: #8b5cf6;
+  --surface-50: rgba(255, 255, 255, 0.03);
+  --surface-100: rgba(255, 255, 255, 0.05);
 }
 
 * {
@@ -70,9 +76,14 @@ body {
 .badge-escalated { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
 .badge-retried { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
 .badge-clarification { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
+.badge-awaiting_clarification { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
 .badge-active { background: rgba(16, 185, 129, 0.15); color: #34d399; }
 .badge-onboarding { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
 .badge-skipped { background: rgba(100, 116, 139, 0.15); color: #94a3b8; }
+.badge-rerouted { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+.badge-healthy { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.badge-at_risk { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.badge-breach { background: rgba(239, 68, 68, 0.15); color: #f87171; }
 
 /* Pulse animation for running states */
 .pulse-dot {

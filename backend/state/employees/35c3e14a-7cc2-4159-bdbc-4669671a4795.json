@@ -1,0 +1,11 @@
+{
+  "id": "35c3e14a-7cc2-4159-bdbc-4669671a4795",
+  "employeeId": "EMP-3463",
+  "name": "sarv",
+  "email": "assdf",
+  "role": "asdfs",
+  "department": "Engineering",
+  "status": "ACTIVE",
+  "createdAt": "2026-03-24T05:25:40.039127+00:00",
+  "updatedAt": "2026-03-24T05:26:58.935281+00:00"
+}

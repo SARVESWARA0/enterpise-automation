@@ -50,7 +50,7 @@ export default function Sidebar() {
           <div className="pulse-dot" style={{ background: 'var(--success)' }} />
           System Online
         </div>
-        <div>Multi-Agent Orchestrator v1.0</div>
+        <div>Multi-Agent Orchestrator v2.0</div>
       </div>
     </aside>
   );
