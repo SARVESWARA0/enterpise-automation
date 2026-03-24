@@ -1,0 +1,73 @@
+{
+  "id": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+  "type": "onboard_new_employee_alex_kim,_email_alex@company.com,_role_data_analyst,_department_analytics",
+  "entityId": null,
+  "triggerEvent": "manual_trigger",
+  "inputData": {
+    "description": "onboard_new_employee_alex_kim,_email_alex@company.com,_role_data_analyst,_department_analytics workflow",
+    "triggerEvent": "manual_trigger"
+  },
+  "status": "ESCALATED",
+  "plan": [
+    {
+      "id": "3dda4d89-7cb8-48d8-9c86-eda1c26579d8",
+      "stepName": "Create email account",
+      "stepDescription": "Use create_email_account with employee_name='Alex Kim', employee_email='alex@company.com', department='Analytics'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0
+    },
+    {
+      "id": "7053cddd-f8f8-4b75-b966-d4053c509384",
+      "stepName": "Update HR records",
+      "stepDescription": "Use update_employee_status to set Alex Kim's status to ONBOARDING and record role='Data Analyst' and department='Analytics'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 1
+    },
+    {
+      "id": "9b9a9fee-e844-4a6f-9a88-fe60451d0fdb",
+      "stepName": "Send onboarding email",
+      "stepDescription": "Use send_email with to='alex@company.com', subject='Welcome to Analytics team!', body='Dear Alex, welcome aboard as a Data Analyst in the Analytics department!'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 2
+    }
+  ],
+  "steps": [
+    {
+      "id": "3dda4d89-7cb8-48d8-9c86-eda1c26579d8",
+      "stepName": "Create email account",
+      "stepDescription": "Use create_email_account with employee_name='Alex Kim', employee_email='alex@company.com', department='Analytics'",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0,
+      "currentOutput": "The email account for Alex Kim has been successfully created with the email address alex@company.com in the Analytics department.\n"
+    },
+    {
+      "id": "7053cddd-f8f8-4b75-b966-d4053c509384",
+      "stepName": "Update HR records",
+      "stepDescription": "Use update_employee_status to set Alex Kim's status to ONBOARDING and record role='Data Analyst' and department='Analytics'",
+      "status": "ESCALATED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 2,
+      "dependencyOrder": 1
+    },
+    {
+      "id": "9b9a9fee-e844-4a6f-9a88-fe60451d0fdb",
+      "stepName": "Send onboarding email",
+      "stepDescription": "Use send_email with to='alex@company.com', subject='Welcome to Analytics team!', body='Dear Alex, welcome aboard as a Data Analyst in the Analytics department!'",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 2,
+      "currentOutput": "The onboarding email has been successfully sent to Alex Kim at alex@company.com.\n"
+    }
+  ],
+  "createdAt": "2026-03-23T09:27:34.446878+00:00",
+  "updatedAt": "2026-03-23T09:28:42.939336+00:00"
+}

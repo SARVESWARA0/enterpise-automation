@@ -1,0 +1,125 @@
+[
+  {
+    "decision": "workflow_started",
+    "reason": "Starting Find recent employees who are onboarding and send them a welcome email workflow with 0 steps",
+    "actionTaken": "Orchestrator initialized",
+    "agentName": "Orchestrator",
+    "status": "running",
+    "id": "c58c251a-ca11-4fb4-8222-1b0771b08d2f",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:31:41.078924+00:00"
+  },
+  {
+    "decision": "step_started",
+    "reason": "Executing step 'Identify Employees in Onboarding Process'",
+    "actionTaken": "Dispatching to ExecutionAgent",
+    "agentName": "ExecutionAgent",
+    "toolName": "ExecutionAgent",
+    "status": "running",
+    "id": "9712f646-ddb1-4b6b-bd9e-32b2cb1ccd8c",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:31:45.233385+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Executed SQL: SELECT id, name, email FROM employees WHERE status...",
+    "actionTaken": "execute_sql",
+    "agentName": "ExecutionAgent",
+    "toolName": "execute_sql",
+    "status": "completed",
+    "id": "a020577e-d495-4451-aaeb-4ebd37f59340",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:31:48.342341+00:00"
+  },
+  {
+    "decision": "retry",
+    "reason": "Recovery agent decided to retry: RETRY: THE FAILURE APPEARS TO BE DUE TO NO EMPLOYEES BEING IN THE ONBOARDING PROCESS WITHIN THE LAST",
+    "actionTaken": "Retry attempt 1",
+    "agentName": "RecoveryAgent",
+    "toolName": "",
+    "retryCount": 1,
+    "status": "retrying",
+    "id": "0a3bbbcd-7a51-44b9-9763-5bc04f29fccd",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:31:57.642733+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Executed SQL: SELECT id, name, email FROM employees WHERE status...",
+    "actionTaken": "execute_sql",
+    "agentName": "ExecutionAgent",
+    "toolName": "execute_sql",
+    "status": "completed",
+    "id": "5bb86279-eb01-4bf9-840c-fc14f3943a92",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:32:01.574690+00:00"
+  },
+  {
+    "decision": "escalated",
+    "reason": "All retries exhausted or permanent failure",
+    "actionTaken": "Escalated to management",
+    "agentName": "RecoveryAgent",
+    "toolName": "",
+    "retryCount": 1,
+    "status": "escalated",
+    "id": "7ffb8eab-3c2a-4c80-af07-8c54f2701040",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:32:09.572211+00:00"
+  },
+  {
+    "decision": "step_started",
+    "reason": "Executing step 'Create Welcome Email Content'",
+    "actionTaken": "Dispatching to ExecutionAgent",
+    "agentName": "ExecutionAgent",
+    "toolName": "ExecutionAgent",
+    "status": "running",
+    "id": "d1d1d29c-944a-42dd-bba7-c7a53af105a8",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:32:09.667996+00:00"
+  },
+  {
+    "decision": "completed",
+    "reason": "Step 'Create Welcome Email Content' completed successfully",
+    "actionTaken": "Execution finished",
+    "agentName": "ExecutionAgent",
+    "toolName": "",
+    "retryCount": 0,
+    "status": "completed",
+    "id": "b44c836d-33e5-4926-9d63-749f4b7938b4",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:32:15.844921+00:00"
+  },
+  {
+    "decision": "step_started",
+    "reason": "Executing step 'Send Welcome Emails'",
+    "actionTaken": "Dispatching to ExecutionAgent",
+    "agentName": "ExecutionAgent",
+    "toolName": "ExecutionAgent",
+    "status": "running",
+    "id": "9f329463-6830-4886-968c-5912b617be5a",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:32:15.915573+00:00"
+  },
+  {
+    "decision": "completed",
+    "reason": "Step 'Send Welcome Emails' completed successfully",
+    "actionTaken": "Execution finished",
+    "agentName": "ExecutionAgent",
+    "toolName": "",
+    "retryCount": 0,
+    "status": "completed",
+    "id": "9d055200-cea0-4860-98f0-f5a67e5ec81b",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:32:25.997449+00:00"
+  },
+  {
+    "decision": "escalated",
+    "reason": "Workflow completed with status ESCALATED",
+    "actionTaken": "All 3 steps processed",
+    "agentName": "Orchestrator",
+    "status": "escalated",
+    "id": "5784a4a0-6e0a-45dc-af15-bef596cf68eb",
+    "workflowId": "cbf8eee8-c612-44c1-be5a-f51179eb6bd5",
+    "timestamp": "2026-03-23T08:32:26.086636+00:00"
+  }
+]

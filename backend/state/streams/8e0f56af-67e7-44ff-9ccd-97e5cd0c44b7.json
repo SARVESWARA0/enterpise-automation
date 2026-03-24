@@ -1,0 +1,99 @@
+[
+  {
+    "type": "workflow:start",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\ude80 Starting: Send a welcome email to knj@company.com and schedule an onboarding meeting",
+    "timestamp": "2026-03-23T10:14:15.168979+00:00"
+  },
+  {
+    "type": "chat:agent_assigned",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "PlannerAgent",
+    "message": "\ud83d\udccb Planning workflow steps...",
+    "timestamp": "2026-03-23T10:14:15.172842+00:00"
+  },
+  {
+    "type": "chat:message",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "PlannerAgent",
+    "message": "[\n  {\n    \"stepName\": \"Create email account for new employee\",\n    \"stepDescription\": \"Use create_email_account with employee_name='KnJ', employee_email='knj@company.com', department='Onboarding'\"\n  },\n  {\n    \"stepName\": \"Send welcome email\",\n    \"stepDescription\": \"Use send_email with to='knj@company.com', subject='Welcome to the Company!', body='Dear KnJ, we are excited to have you onboard. Looking forward to working with you.'\"\n  },\n  {\n    \"stepName\": \"Schedule onboarding meeting\",\n    \"stepDescription\": \"Use create_calendar_event to schedule a meeting with KnJ for onboarding, including date, time, and agenda details.\"\n  }\n]\n",
+    "timestamp": "2026-03-23T10:14:19.187539+00:00"
+  },
+  {
+    "type": "chat:plan_generated",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "PlannerAgent",
+    "message": "\u2705 Generated 3-step plan.",
+    "data": {
+      "steps": [
+        {
+          "stepName": "Create email account for new employee",
+          "stepDescription": "Use create_email_account with employee_name='KnJ', employee_email='knj@company.com', department='Onboarding'"
+        },
+        {
+          "stepName": "Send welcome email",
+          "stepDescription": "Use send_email with to='knj@company.com', subject='Welcome to the Company!', body='Dear KnJ, we are excited to have you onboard. Looking forward to working with you.'"
+        },
+        {
+          "stepName": "Schedule onboarding meeting",
+          "stepDescription": "Use create_calendar_event to schedule a meeting with KnJ for onboarding, including date, time, and agenda details."
+        }
+      ]
+    },
+    "timestamp": "2026-03-23T10:14:19.189210+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 1/3: Create email account for new employee",
+    "timestamp": "2026-03-23T10:14:19.210262+00:00"
+  },
+  {
+    "type": "chat:step_complete",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "ExecutionAgent",
+    "message": "\ud83c\udf89 Completed: Create email account for new employee",
+    "timestamp": "2026-03-23T10:14:26.931252+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 2/3: Send welcome email",
+    "timestamp": "2026-03-23T10:14:26.933890+00:00"
+  },
+  {
+    "type": "chat:step_complete",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "ExecutionAgent",
+    "message": "\ud83c\udf89 Completed: Send welcome email",
+    "timestamp": "2026-03-23T10:14:33.805468+00:00"
+  },
+  {
+    "type": "chat:step_start",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "Orchestrator",
+    "message": "\ud83d\udccc Step 3/3: Schedule onboarding meeting",
+    "timestamp": "2026-03-23T10:14:33.807358+00:00"
+  },
+  {
+    "type": "chat:step_complete",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "ExecutionAgent",
+    "message": "\ud83c\udf89 Completed: Schedule onboarding meeting",
+    "timestamp": "2026-03-23T10:14:40.566306+00:00"
+  },
+  {
+    "type": "workflow:complete",
+    "workflowId": "8e0f56af-67e7-44ff-9ccd-97e5cd0c44b7",
+    "agentName": "Orchestrator",
+    "message": "\ud83c\udf89 Workflow completed",
+    "data": {
+      "totalSteps": 3,
+      "status": "COMPLETED"
+    },
+    "timestamp": "2026-03-23T10:14:41.019222+00:00"
+  }
+]

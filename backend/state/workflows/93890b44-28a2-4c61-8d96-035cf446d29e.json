@@ -1,0 +1,301 @@
+{
+  "id": "93890b44-28a2-4c61-8d96-035cf446d29e",
+  "type": "employee_onboarding",
+  "entityId": "a8595cfe-a787-48c0-84db-793643d680cd",
+  "triggerEvent": "employee_created",
+  "inputData": {
+    "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+    "name": "Sarah Chen",
+    "email": "sarah.chen@company.com",
+    "role": "Backend Engineer",
+    "department": "Engineering",
+    "triggerEvent": "employee_created"
+  },
+  "status": "ESCALATED",
+  "plan": [
+    {
+      "id": "3a572a68-fff3-46cc-bfc5-9fd0d00d0ecb",
+      "stepName": "Create email account",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_email_account",
+      "dependencyOrder": 0,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null,
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "93bff907-fec3-4bf1-8c38-44024e31a595",
+      "stepName": "Create JIRA access",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_task",
+      "dependencyOrder": 1,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null,
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "e6aac838-10f6-459e-bd91-0c0d2ab0e813",
+      "stepName": "Assign onboarding buddy",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "find_delegate",
+      "dependencyOrder": 2,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null,
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "02751c3b-ef4f-4416-bc4c-26d1db790c1f",
+      "stepName": "Schedule orientation meeting",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_calendar_event",
+      "dependencyOrder": 3,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null,
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "58202c6a-19c9-4e3e-b861-0c7d3acdfe17",
+      "stepName": "Create onboarding task list",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_task",
+      "dependencyOrder": 4,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null,
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "65b460f5-4932-4cfd-8c7d-698a49ae9b99",
+      "stepName": "Send welcome email",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "send_email",
+      "dependencyOrder": 5,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null,
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "50104baf-eb03-49d5-b46a-09456ba89a32",
+      "stepName": "Update employee status to active",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "update_employee_status",
+      "dependencyOrder": 6,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null,
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "3a572a68-fff3-46cc-bfc5-9fd0d00d0ecb",
+      "stepName": "Create email account",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_email_account",
+      "dependencyOrder": 0,
+      "status": "COMPLETED",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": "The email account has been successfully created for Sarah Chen with the address sarah.chen@company.com.\n",
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "93bff907-fec3-4bf1-8c38-44024e31a595",
+      "stepName": "Create JIRA access",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_task",
+      "dependencyOrder": 1,
+      "status": "COMPLETED",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": "The JIRA task for creating access has been successfully created and assigned to Sarah Chen.\n",
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "e6aac838-10f6-459e-bd91-0c0d2ab0e813",
+      "stepName": "Assign onboarding buddy",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "find_delegate",
+      "dependencyOrder": 2,
+      "status": "ESCALATED",
+      "retryCount": 1,
+      "maxRetries": 2,
+      "currentOutput": null,
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "02751c3b-ef4f-4416-bc4c-26d1db790c1f",
+      "stepName": "Schedule orientation meeting",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_calendar_event",
+      "dependencyOrder": 3,
+      "status": "COMPLETED",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": "The orientation meeting has been successfully scheduled with Sarah Chen for next week.\n",
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "58202c6a-19c9-4e3e-b861-0c7d3acdfe17",
+      "stepName": "Create onboarding task list",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "create_jira_task",
+      "dependencyOrder": 4,
+      "status": "COMPLETED",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": "The JIRA task for creating the onboarding task list has been successfully created and assigned to Sarah Chen.\n",
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "65b460f5-4932-4cfd-8c7d-698a49ae9b99",
+      "stepName": "Send welcome email",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "send_email",
+      "dependencyOrder": 5,
+      "status": "COMPLETED",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": "The welcome email has been successfully sent to Sarah Chen.\n",
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    },
+    {
+      "id": "50104baf-eb03-49d5-b46a-09456ba89a32",
+      "stepName": "Update employee status to active",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "toolName": "update_employee_status",
+      "dependencyOrder": 6,
+      "status": "COMPLETED",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": "The employee status has been successfully updated to ACTIVE for Sarah Chen.\n",
+      "inputData": {
+        "employeeId": "a8595cfe-a787-48c0-84db-793643d680cd",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Backend Engineer",
+        "department": "Engineering",
+        "triggerEvent": "employee_created"
+      }
+    }
+  ],
+  "createdAt": "2026-03-23T06:02:12.462330+00:00",
+  "updatedAt": "2026-03-23T06:03:08.915285+00:00"
+}

@@ -1,0 +1,129 @@
+[
+  {
+    "decision": "workflow_started",
+    "reason": "Goal: onboard_new_employee_alex_kim,_email_alex@company.com,_role_data_analyst,_department_analytics",
+    "actionTaken": "Orchestrator initialized",
+    "agentName": "Orchestrator",
+    "status": "running",
+    "id": "addf014d-aaca-4bbe-9e58-2cc099cba5bf",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:27:34.581687+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Created email: alex@company.com",
+    "actionTaken": "create_email_account",
+    "agentName": "ExecutionAgent",
+    "toolName": "create_email_account",
+    "status": "completed",
+    "id": "83dfb954-20f9-4d8d-9771-4d920f47a725",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:27:52.113558+00:00"
+  },
+  {
+    "decision": "completed",
+    "reason": "Step 'Create email account' succeeded",
+    "actionTaken": "Step finished",
+    "agentName": "ExecutionAgent",
+    "status": "completed",
+    "id": "6e1d7f77-8663-455a-b1b4-0fd09e3f8428",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:27:55.212530+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Status \u2192 ONBOARDING",
+    "actionTaken": "update_employee_status",
+    "agentName": "ExecutionAgent",
+    "toolName": "update_employee_status",
+    "status": "failed",
+    "id": "0f8653f3-c055-4732-b7d1-cc98bebff5ce",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:28:01.210250+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "SQL: UPDATE employees SET role='Data Analyst', department='Analytics' WHERE email='al",
+    "actionTaken": "execute_sql",
+    "agentName": "ExecutionAgent",
+    "toolName": "execute_sql",
+    "status": "completed",
+    "id": "0c29a3d0-2e0c-4ee7-a0dd-80208d29e243",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:28:01.416609+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "SQL: UPDATE employees SET role='Data Analyst', department='Analytics' WHERE email='al",
+    "actionTaken": "execute_sql",
+    "agentName": "ExecutionAgent",
+    "toolName": "execute_sql",
+    "status": "completed",
+    "id": "fdec7e69-5579-4d0b-9bdc-4c804f75fce7",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:28:09.860438+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Status \u2192 ONBOARDING",
+    "actionTaken": "update_employee_status",
+    "agentName": "ExecutionAgent",
+    "toolName": "update_employee_status",
+    "status": "failed",
+    "id": "dde15e1f-6fc4-4bf9-81d1-fddc2a1e046c",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:28:14.211918+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Status \u2192 ONBOARDING",
+    "actionTaken": "update_employee_status",
+    "agentName": "ExecutionAgent",
+    "toolName": "update_employee_status",
+    "status": "failed",
+    "id": "bc960b11-59c4-4b8d-aba8-01ef4d7eeb01",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:28:25.140773+00:00"
+  },
+  {
+    "decision": "escalated",
+    "reason": "Retries exhausted or permanent failure",
+    "actionTaken": "Escalated",
+    "agentName": "RecoveryAgent",
+    "status": "escalated",
+    "id": "c44fde0c-d71e-4327-91fb-1a3ee7264741",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:28:30.379219+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Email to alex@company.com: Welcome to Analytics team!",
+    "actionTaken": "send_email",
+    "agentName": "ExecutionAgent",
+    "toolName": "send_email",
+    "status": "completed",
+    "id": "c021ca02-3123-4051-a718-f11e5f1763d0",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:28:37.317209+00:00"
+  },
+  {
+    "decision": "completed",
+    "reason": "Step 'Send onboarding email' succeeded",
+    "actionTaken": "Step finished",
+    "agentName": "ExecutionAgent",
+    "status": "completed",
+    "id": "af5f343a-15b7-42b7-9201-5ab45b45bd96",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:28:40.990361+00:00"
+  },
+  {
+    "decision": "escalated",
+    "reason": "Workflow finished: ESCALATED",
+    "actionTaken": "All 3 steps processed",
+    "agentName": "Orchestrator",
+    "status": "escalated",
+    "id": "dc6ad49a-730e-481c-bcc4-1ec79fdbd25d",
+    "workflowId": "1fce7458-9dec-4e63-8793-7455c02f5a64",
+    "timestamp": "2026-03-23T09:28:42.974589+00:00"
+  }
+]

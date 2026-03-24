@@ -1,0 +1,86 @@
+{
+  "id": "b2740178-a9c8-43e2-bee9-5d29f3d3682d",
+  "type": "Find recent employees who are onboarding and send them a welcome email",
+  "entityId": null,
+  "triggerEvent": "manual",
+  "inputData": {},
+  "status": "ESCALATED",
+  "plan": [
+    {
+      "id": "97353791-b3d5-4264-941d-6adf98312711",
+      "stepName": "Identify Onboarding Employees",
+      "stepDescription": "Use execute_sql to query the employee database for employees with status 'onboarding' who were added within the last 30 days. Retrieve their email addresses and names.",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "dependencyOrder": 0,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null
+    },
+    {
+      "id": "1578f26d-a3ac-492b-9fa1-e0cb161f5e09",
+      "stepName": "Create Welcome Email",
+      "stepDescription": "Draft a welcome email addressed to the identified employees with a friendly message and onboarding resources.",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "dependencyOrder": 1,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null
+    },
+    {
+      "id": "494f4682-91ac-4396-8c66-1e5bab392445",
+      "stepName": "Send Welcome Emails",
+      "stepDescription": "Use send_email for each employee to send the personalized welcome email.",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "dependencyOrder": 2,
+      "status": "PENDING",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null
+    }
+  ],
+  "steps": [
+    {
+      "id": "97353791-b3d5-4264-941d-6adf98312711",
+      "stepName": "Identify Onboarding Employees",
+      "stepDescription": "Use execute_sql to query the employee database for employees with status 'onboarding' who were added within the last 30 days. Retrieve their email addresses and names.",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "dependencyOrder": 0,
+      "status": "ESCALATED",
+      "retryCount": 2,
+      "maxRetries": 2,
+      "currentOutput": null
+    },
+    {
+      "id": "1578f26d-a3ac-492b-9fa1-e0cb161f5e09",
+      "stepName": "Create Welcome Email",
+      "stepDescription": "Draft a welcome email addressed to the identified employees with a friendly message and onboarding resources.",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "dependencyOrder": 1,
+      "status": "ESCALATED",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null
+    },
+    {
+      "id": "494f4682-91ac-4396-8c66-1e5bab392445",
+      "stepName": "Send Welcome Emails",
+      "stepDescription": "Use send_email for each employee to send the personalized welcome email.",
+      "stepType": "execution",
+      "assignedAgent": "ExecutionAgent",
+      "dependencyOrder": 2,
+      "status": "ESCALATED",
+      "retryCount": 0,
+      "maxRetries": 2,
+      "currentOutput": null
+    }
+  ],
+  "createdAt": "2026-03-23T08:29:04.596551+00:00",
+  "updatedAt": "2026-03-23T08:30:10.536660+00:00"
+}

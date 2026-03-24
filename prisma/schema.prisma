@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EmployeeStatus {
+  PENDING
+  ONBOARDING
+  ACTIVE
+  FAILED
+}
+
+enum WorkflowStatus {
+  PENDING
+  PLANNING
+  RUNNING
+  COMPLETED
+  FAILED
+  ESCALATED
+}
+
+enum StepStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  RETRIED
+  ESCALATED
+  AWAITING_CLARIFICATION
+  SKIPPED
+}
+
+model Employee {
+  id         String         @id @default(uuid())
+  name       String
+  email      String         @unique
+  role       String
+  department String
+  status     EmployeeStatus @default(PENDING)
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+  workflows  Workflow[]
+
+  @@map("employees")
+}
+
+model Workflow {
+  id           String         @id @default(uuid())
+  type         String
+  entityId     String?        @map("entity_id")
+  triggerEvent String         @map("trigger_event")
+  inputData    Json?          @map("input_data")
+  status       WorkflowStatus @default(PENDING)
+  plan         Json?
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  employee  Employee?  @relation(fields: [entityId], references: [id])
+  steps     Step[]
+  agentLogs AgentLog[]
+  auditLogs AuditLog[]
+
+  @@map("workflows")
+}
+
+model Step {
+  id               String     @id @default(uuid())
+  workflowId       String     @map("workflow_id")
+  stepName         String     @map("step_name")
+  stepType         String     @map("step_type")
+  status           StepStatus @default(PENDING)
+  retryCount       Int        @default(0) @map("retry_count")
+  maxRetries       Int        @default(2) @map("max_retries")
+  assignedAgent    String?    @map("assigned_agent")
+  toolName         String?    @map("tool_name")
+  inputData        Json?      @map("input_data")
+  currentOutput    Json?      @map("current_output")
+  fallbackBehavior String?    @map("fallback_behavior")
+  dependencyOrder  Int        @default(0) @map("dependency_order")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+
+  workflow  Workflow   @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  agentLogs AgentLog[]
+  auditLogs AuditLog[]
+
+  @@map("steps")
+}
+
+model AgentLog {
+  id         String   @id @default(uuid())
+  workflowId String   @map("workflow_id")
+  stepId     String?  @map("step_id")
+  agentName  String   @map("agent_name")
+  action     String
+  toolName   String?  @map("tool_name")
+  input      Json?
+  output     Json?
+  durationMs Int?     @map("duration_ms")
+  timestamp  DateTime @default(now())
+
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  step     Step?    @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  @@map("agent_logs")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  workflowId  String   @map("workflow_id")
+  stepId      String?  @map("step_id")
+  decision    String?
+  reason      String?
+  actionTaken String?  @map("action_taken")
+  agentName   String?  @map("agent_name")
+  toolName    String?  @map("tool_name")
+  retryCount  Int?     @map("retry_count")
+  status      String?
+  timestamp   DateTime @default(now())
+
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  step     Step?    @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
+}

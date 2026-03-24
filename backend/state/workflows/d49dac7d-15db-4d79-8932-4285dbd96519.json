@@ -1,0 +1,12 @@
+{
+  "id": "d49dac7d-15db-4d79-8932-4285dbd96519",
+  "type": "Audit recent employee changes",
+  "entityId": null,
+  "triggerEvent": "manual",
+  "inputData": {},
+  "status": "PENDING",
+  "plan": [],
+  "steps": [],
+  "createdAt": "2026-03-23T08:00:21.381116+00:00",
+  "updatedAt": "2026-03-23T08:00:21.381182+00:00"
+}

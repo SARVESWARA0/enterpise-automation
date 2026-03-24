@@ -1,0 +1,12 @@
+[
+  {
+    "decision": "workflow_started",
+    "reason": "Goal: Onboard a new intern named John Doe, email john@company.com, role Intern, department Engineering",
+    "actionTaken": "Orchestrator initialized",
+    "agentName": "Orchestrator",
+    "status": "running",
+    "id": "1825ae53-0f3c-46c6-9b38-8b345cd6c0dd",
+    "workflowId": "f27037bb-ba35-4d6a-bcb2-0fd887baf6d9",
+    "timestamp": "2026-03-23T09:08:15.633277+00:00"
+  }
+]

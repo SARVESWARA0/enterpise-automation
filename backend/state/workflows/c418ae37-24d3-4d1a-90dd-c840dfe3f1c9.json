@@ -1,0 +1,12 @@
+{
+  "id": "c418ae37-24d3-4d1a-90dd-c840dfe3f1c9",
+  "type": "Analyze the sales database and prepare a summary report of top clients",
+  "entityId": null,
+  "triggerEvent": "manual",
+  "inputData": {},
+  "status": "PENDING",
+  "plan": [],
+  "steps": [],
+  "createdAt": "2026-03-23T07:53:55.621151+00:00",
+  "updatedAt": "2026-03-23T07:53:55.621250+00:00"
+}

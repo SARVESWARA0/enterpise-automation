@@ -1,0 +1,10 @@
+{
+  "id": "a8595cfe-a787-48c0-84db-793643d680cd",
+  "name": "Sarah Chen",
+  "email": "sarah.chen@company.com",
+  "role": "Backend Engineer",
+  "department": "Engineering",
+  "status": "ACTIVE",
+  "createdAt": "2026-03-23T06:02:12.445020+00:00",
+  "updatedAt": "2026-03-23T06:03:06.159899+00:00"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "f5c22853-837f-4e4d-a75f-f84f0fc92a77",
+  "type": "Check database constraints for recent employee additions",
+  "entityId": null,
+  "triggerEvent": "manual",
+  "inputData": {},
+  "status": "PENDING",
+  "plan": [],
+  "steps": [],
+  "createdAt": "2026-03-23T08:12:48.026021+00:00",
+  "updatedAt": "2026-03-23T08:12:48.026245+00:00"
+}

@@ -1,0 +1,91 @@
+{
+  "id": "f27037bb-ba35-4d6a-bcb2-0fd887baf6d9",
+  "type": "Onboard a new intern named John Doe, email john@company.com, role Intern, department Engineering",
+  "entityId": null,
+  "triggerEvent": "manual",
+  "inputData": {
+    "email": "john@company.com",
+    "department": "Engineering",
+    "name": "John Doe",
+    "role": "Intern"
+  },
+  "status": "FAILED",
+  "plan": [
+    {
+      "id": "47a9ed55-bec2-4819-b991-79e37fd5e92b",
+      "stepName": "Create email account for John Doe",
+      "stepDescription": "Use create_email_account to provision an email with to='john@company.com' and name='John Doe'.",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0
+    },
+    {
+      "id": "9680bad8-e58b-4303-8d5c-3678d271aa18",
+      "stepName": "Log new employee onboarding",
+      "stepDescription": "Insert a new employee record into the Employees table with name='John Doe', email='john@company.com', role='Intern', department='Engineering', and status='PENDING'.",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 1
+    },
+    {
+      "id": "6efe774f-4347-4e0e-865e-8afad23cd094",
+      "stepName": "Create onboarding task in JIRA",
+      "stepDescription": "Use create_jira_task to create a task titled 'Onboard New Intern: John Doe' with description 'Complete onboarding procedures for John Doe, Intern in Engineering.'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 2
+    },
+    {
+      "id": "054dc467-aa9b-4bea-964f-9b74436f7b12",
+      "stepName": "Send Welcome Email to John Doe",
+      "stepDescription": "Use send_email to send a welcome email to 'john@company.com' with subject='Welcome to the Company' and body='Dear John Doe, welcome to the Engineering department as an Intern.'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 3
+    }
+  ],
+  "steps": [
+    {
+      "id": "47a9ed55-bec2-4819-b991-79e37fd5e92b",
+      "stepName": "Create email account for John Doe",
+      "stepDescription": "Use create_email_account to provision an email with to='john@company.com' and name='John Doe'.",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0
+    },
+    {
+      "id": "9680bad8-e58b-4303-8d5c-3678d271aa18",
+      "stepName": "Log new employee onboarding",
+      "stepDescription": "Insert a new employee record into the Employees table with name='John Doe', email='john@company.com', role='Intern', department='Engineering', and status='PENDING'.",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 1
+    },
+    {
+      "id": "6efe774f-4347-4e0e-865e-8afad23cd094",
+      "stepName": "Create onboarding task in JIRA",
+      "stepDescription": "Use create_jira_task to create a task titled 'Onboard New Intern: John Doe' with description 'Complete onboarding procedures for John Doe, Intern in Engineering.'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 2
+    },
+    {
+      "id": "054dc467-aa9b-4bea-964f-9b74436f7b12",
+      "stepName": "Send Welcome Email to John Doe",
+      "stepDescription": "Use send_email to send a welcome email to 'john@company.com' with subject='Welcome to the Company' and body='Dear John Doe, welcome to the Engineering department as an Intern.'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 3
+    }
+  ],
+  "createdAt": "2026-03-23T09:08:15.616614+00:00",
+  "updatedAt": "2026-03-23T09:08:24.422662+00:00"
+}

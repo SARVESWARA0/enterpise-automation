@@ -1,0 +1,75 @@
+{
+  "id": "c1dffa56-ae45-41bc-bde5-489c3d60cb01",
+  "type": "Onboard new employee Sarah Connor, email sarah@company.com, role QA Engineer, department Engineering",
+  "entityId": null,
+  "triggerEvent": "manual",
+  "inputData": {
+    "email": "sarah@company.com",
+    "department": "Engineering",
+    "name": "Sarah Connor",
+    "role": "QA Engineer"
+  },
+  "status": "ESCALATED",
+  "plan": [
+    {
+      "id": "1fb15ea1-2ac3-4446-8b10-a39a7331ed8b",
+      "stepName": "Create email account for Sarah Connor",
+      "stepDescription": "Use create_email_account with employee_name='Sarah Connor', employee_email='sarah@company.com', department='Engineering'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0
+    },
+    {
+      "id": "4580ed59-5b47-4257-8450-024fbe21517e",
+      "stepName": "Send onboarding email to Sarah",
+      "stepDescription": "Use send_email with to='sarah@company.com', subject='Welcome to Engineering!', body='Dear Sarah Connor, welcome to the Engineering team. Your role as QA Engineer begins now.'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 1
+    },
+    {
+      "id": "bf8f5e8a-6a1f-472a-a4ad-60b190905753",
+      "stepName": "Update HR records for Sarah Connor",
+      "stepDescription": "Use update_employee_status with employee_email='sarah@company.com', new_status='ACTIVE' and update role='QA Engineer', department='Engineering'",
+      "status": "PENDING",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 2
+    }
+  ],
+  "steps": [
+    {
+      "id": "1fb15ea1-2ac3-4446-8b10-a39a7331ed8b",
+      "stepName": "Create email account for Sarah Connor",
+      "stepDescription": "Use create_email_account with employee_name='Sarah Connor', employee_email='sarah@company.com', department='Engineering'",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 0,
+      "currentOutput": "The email account for Sarah Connor has been successfully created with the email address sarah@company.com in the Engineering department.\n"
+    },
+    {
+      "id": "4580ed59-5b47-4257-8450-024fbe21517e",
+      "stepName": "Send onboarding email to Sarah",
+      "stepDescription": "Use send_email with to='sarah@company.com', subject='Welcome to Engineering!', body='Dear Sarah Connor, welcome to the Engineering team. Your role as QA Engineer begins now.'",
+      "status": "COMPLETED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 1,
+      "currentOutput": "The onboarding email has been successfully sent to Sarah Connor at her new email address.\n"
+    },
+    {
+      "id": "bf8f5e8a-6a1f-472a-a4ad-60b190905753",
+      "stepName": "Update HR records for Sarah Connor",
+      "stepDescription": "Use update_employee_status with employee_email='sarah@company.com', new_status='ACTIVE' and update role='QA Engineer', department='Engineering'",
+      "status": "ESCALATED",
+      "assignedAgent": "ExecutionAgent",
+      "retryCount": 0,
+      "dependencyOrder": 2
+    }
+  ],
+  "createdAt": "2026-03-23T09:19:40.645866+00:00",
+  "updatedAt": "2026-03-23T09:20:07.316122+00:00"
+}
