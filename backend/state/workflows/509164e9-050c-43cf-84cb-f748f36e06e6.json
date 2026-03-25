@@ -1,0 +1,290 @@
+{
+  "id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+  "type": "custom_workflow",
+  "entityId": null,
+  "triggerEvent": "manual",
+  "inputData": {
+    "request": "add a new employee ,sarveswara ,sarveswara.it23@bitAsathy.ac.in, Ai intern",
+    "triggerEvent": "manual"
+  },
+  "status": "ESCALATED",
+  "plan": [
+    {
+      "step_id": 1,
+      "name": "Create HR Employee Record for Sarveswara",
+      "tool_name": "create_hr_account_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_name": "sarveswara",
+        "employee_email": "sarveswara.it23@bitAsathy.ac.in",
+        "role": "Ai intern"
+      },
+      "depends_on": [],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 2,
+      "name": "Log HR Account Creation for Sarveswara",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "decision": "HR account created",
+        "reason": "Creating employee record in HR system",
+        "action_taken": "HR account created for sarveswara",
+        "agent_name": "execution",
+        "status": "completed"
+      },
+      "depends_on": [
+        1
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 3,
+      "name": "Create Email Account for Sarveswara",
+      "tool_name": "create_email_account_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_email": "sarveswara.it23@bitAsathy.ac.in"
+      },
+      "depends_on": [
+        1
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 4,
+      "name": "Log Email Account Creation for Sarveswara",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "decision": "Email account created",
+        "reason": "Creating email account for new employee",
+        "action_taken": "Email account created for sarveswara.it23@bitAsathy.ac.in",
+        "agent_name": "execution",
+        "status": "completed"
+      },
+      "depends_on": [
+        3
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 5,
+      "name": "Create JIRA Account for Sarveswara (may require escalation)",
+      "tool_name": "create_jira_account_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_email": "sarveswara.it23@bitAsathy.ac.in"
+      },
+      "depends_on": [
+        3
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 6,
+      "name": "Log JIRA Account Creation for Sarveswara",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "decision": "JIRA account creation initiated",
+        "reason": "Provisioning access in JIRA system",
+        "action_taken": "JIRA account creation process started for sarveswara.it23@bitAsathy.ac.in",
+        "agent_name": "execution",
+        "status": "completed"
+      },
+      "depends_on": [
+        5
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 7,
+      "name": "Find Delegate for Sarveswara",
+      "tool_name": "find_delegate",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_name": "sarveswara"
+      },
+      "depends_on": [
+        4
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 8,
+      "name": "Schedule Orientation Meeting with Sarveswara",
+      "tool_name": "schedule_meeting_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_name": "sarveswara",
+        "delegate": "step_7"
+      },
+      "depends_on": [
+        6,
+        7
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 9,
+      "name": "Send Welcome Email to Sarveswara",
+      "tool_name": "send_onboarding_email_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_email": "sarveswara.it23@bitAsathy.ac.in",
+        "employee_name": "sarveswara"
+      },
+      "depends_on": [
+        8
+      ],
+      "assigned_agent": "execution"
+    }
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "name": "Create HR Employee Record for Sarveswara",
+      "tool_name": "create_hr_account_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_name": "sarveswara",
+        "employee_email": "sarveswara.it23@bitAsathy.ac.in",
+        "role": "Ai intern"
+      },
+      "depends_on": [],
+      "assigned_agent": "execution",
+      "status": "ESCALATED"
+    },
+    {
+      "step_id": 2,
+      "name": "Log HR Account Creation for Sarveswara",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "decision": "HR account created",
+        "reason": "Creating employee record in HR system",
+        "action_taken": "HR account created for sarveswara",
+        "agent_name": "execution",
+        "status": "completed"
+      },
+      "depends_on": [
+        1
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 3,
+      "name": "Create Email Account for Sarveswara",
+      "tool_name": "create_email_account_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_email": "sarveswara.it23@bitAsathy.ac.in"
+      },
+      "depends_on": [
+        1
+      ],
+      "assigned_agent": "execution",
+      "status": "ESCALATED"
+    },
+    {
+      "step_id": 4,
+      "name": "Log Email Account Creation for Sarveswara",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "decision": "Email account created",
+        "reason": "Creating email account for new employee",
+        "action_taken": "Email account created for sarveswara.it23@bitAsathy.ac.in",
+        "agent_name": "execution",
+        "status": "completed"
+      },
+      "depends_on": [
+        3
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 5,
+      "name": "Create JIRA Account for Sarveswara (may require escalation)",
+      "tool_name": "create_jira_account_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_email": "sarveswara.it23@bitAsathy.ac.in"
+      },
+      "depends_on": [
+        3
+      ],
+      "assigned_agent": "execution",
+      "status": "ESCALATED"
+    },
+    {
+      "step_id": 6,
+      "name": "Log JIRA Account Creation for Sarveswara",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "decision": "JIRA account creation initiated",
+        "reason": "Provisioning access in JIRA system",
+        "action_taken": "JIRA account creation process started for sarveswara.it23@bitAsathy.ac.in",
+        "agent_name": "execution",
+        "status": "completed"
+      },
+      "depends_on": [
+        5
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 7,
+      "name": "Find Delegate for Sarveswara",
+      "tool_name": "find_delegate",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_name": "sarveswara"
+      },
+      "depends_on": [
+        4
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 8,
+      "name": "Schedule Orientation Meeting with Sarveswara",
+      "tool_name": "schedule_meeting_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_name": "sarveswara",
+        "delegate": "step_7"
+      },
+      "depends_on": [
+        6,
+        7
+      ],
+      "assigned_agent": "execution",
+      "status": "ESCALATED"
+    },
+    {
+      "step_id": 9,
+      "name": "Send Welcome Email to Sarveswara",
+      "tool_name": "send_onboarding_email_tool",
+      "parameters": {
+        "workflow_id": "509164e9-050c-43cf-84cb-f748f36e06e6",
+        "employee_email": "sarveswara.it23@bitAsathy.ac.in",
+        "employee_name": "sarveswara"
+      },
+      "depends_on": [
+        8
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    }
+  ],
+  "createdAt": "2026-03-24T18:06:48.420261+00:00",
+  "updatedAt": "2026-03-24T18:10:00.863795+00:00"
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "type": "workflow:failed",
+    "workflowId": "d73d6d7b-c6b4-4dbe-8969-3d68361964ae",
+    "message": "Workflow failed: Failed to load tool <strands.tools.mcp.mcp_client.MCPClient object at 0x0000020711626BA0>: Failed to start MCP client: the client session is currently running",
+    "timestamp": "2026-03-24T17:13:04.540981+00:00"
+  }
+]

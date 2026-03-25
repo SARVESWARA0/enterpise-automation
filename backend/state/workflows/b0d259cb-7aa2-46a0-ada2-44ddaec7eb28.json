@@ -1,0 +1,290 @@
+{
+  "id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+  "type": "custom_workflow",
+  "entityId": null,
+  "triggerEvent": "manual",
+  "inputData": {
+    "request": "Onboard Jane Smith, Engineering team, starting Tuesday. Email: jane.smith@company.com",
+    "triggerEvent": "manual"
+  },
+  "status": "RUNNING",
+  "plan": [
+    {
+      "step_id": 1,
+      "name": "Create HR Account for Jane Smith",
+      "tool_name": "create_hr_account_tool",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "name": "Jane Smith",
+        "department": "Engineering",
+        "start_date": "Tuesday"
+      },
+      "depends_on": [],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 2,
+      "name": "Log HR Account Creation for Jane Smith",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "decision": "HR account created for Jane Smith",
+        "reason": "Successful HR account creation",
+        "action_taken": "Created HR account",
+        "agent_name": "execution",
+        "tool_name": "create_hr_account_tool",
+        "status": "completed"
+      },
+      "depends_on": [
+        1
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 3,
+      "name": "Create Email Account for Jane Smith",
+      "tool_name": "create_email_account",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "name": "Jane Smith",
+        "email": "jane.smith@company.com"
+      },
+      "depends_on": [
+        2
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 4,
+      "name": "Log Email Account Creation for Jane Smith",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "decision": "Email account created for Jane Smith",
+        "reason": "Successful email account creation",
+        "action_taken": "Created email account",
+        "agent_name": "execution",
+        "tool_name": "create_email_account",
+        "status": "completed"
+      },
+      "depends_on": [
+        3
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 5,
+      "name": "Create JIRA Account for Jane Smith (may require escalation)",
+      "tool_name": "create_jira_account_tool",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "name": "Jane Smith"
+      },
+      "depends_on": [
+        4
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 6,
+      "name": "Log JIRA Account Creation for Jane Smith",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "decision": "JIRA account creation initiated for Jane Smith",
+        "reason": "Attempting to create JIRA account with potential escalation if necessary",
+        "action_taken": "Created JIRA account",
+        "agent_name": "execution",
+        "tool_name": "create_jira_account_tool",
+        "status": "completed"
+      },
+      "depends_on": [
+        5
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 7,
+      "name": "Find Delegate for Jane Smith",
+      "tool_name": "find_delegate",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "employee_name": "Jane Smith",
+        "department": "Engineering"
+      },
+      "depends_on": [
+        6
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 8,
+      "name": "Schedule Orientation Meeting with Jane Smith",
+      "tool_name": "schedule_meeting_tool",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "employee_name": "Jane Smith",
+        "date": "Tuesday"
+      },
+      "depends_on": [
+        7
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 9,
+      "name": "Send Welcome Email to Jane Smith",
+      "tool_name": "send_onboarding_email_tool",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "recipient_email": "jane.smith@company.com"
+      },
+      "depends_on": [
+        8
+      ],
+      "assigned_agent": "execution"
+    }
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "name": "Create HR Account for Jane Smith",
+      "tool_name": "create_hr_account_tool",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "name": "Jane Smith",
+        "department": "Engineering",
+        "start_date": "Tuesday"
+      },
+      "depends_on": [],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 2,
+      "name": "Log HR Account Creation for Jane Smith",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "decision": "HR account created for Jane Smith",
+        "reason": "Successful HR account creation",
+        "action_taken": "Created HR account",
+        "agent_name": "execution",
+        "tool_name": "create_hr_account_tool",
+        "status": "completed"
+      },
+      "depends_on": [
+        1
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 3,
+      "name": "Create Email Account for Jane Smith",
+      "tool_name": "create_email_account",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "name": "Jane Smith",
+        "email": "jane.smith@company.com"
+      },
+      "depends_on": [
+        2
+      ],
+      "assigned_agent": "execution",
+      "status": "ESCALATED"
+    },
+    {
+      "step_id": 4,
+      "name": "Log Email Account Creation for Jane Smith",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "decision": "Email account created for Jane Smith",
+        "reason": "Successful email account creation",
+        "action_taken": "Created email account",
+        "agent_name": "execution",
+        "tool_name": "create_email_account",
+        "status": "completed"
+      },
+      "depends_on": [
+        3
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 5,
+      "name": "Create JIRA Account for Jane Smith (may require escalation)",
+      "tool_name": "create_jira_account_tool",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "name": "Jane Smith"
+      },
+      "depends_on": [
+        4
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 6,
+      "name": "Log JIRA Account Creation for Jane Smith",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "decision": "JIRA account creation initiated for Jane Smith",
+        "reason": "Attempting to create JIRA account with potential escalation if necessary",
+        "action_taken": "Created JIRA account",
+        "agent_name": "execution",
+        "tool_name": "create_jira_account_tool",
+        "status": "completed"
+      },
+      "depends_on": [
+        5
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 7,
+      "name": "Find Delegate for Jane Smith",
+      "tool_name": "find_delegate",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "employee_name": "Jane Smith",
+        "department": "Engineering"
+      },
+      "depends_on": [
+        6
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 8,
+      "name": "Schedule Orientation Meeting with Jane Smith",
+      "tool_name": "schedule_meeting_tool",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "employee_name": "Jane Smith",
+        "date": "Tuesday"
+      },
+      "depends_on": [
+        7
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 9,
+      "name": "Send Welcome Email to Jane Smith",
+      "tool_name": "send_onboarding_email_tool",
+      "parameters": {
+        "workflow_id": "b0d259cb-7aa2-46a0-ada2-44ddaec7eb28",
+        "recipient_email": "jane.smith@company.com"
+      },
+      "depends_on": [
+        8
+      ],
+      "assigned_agent": "execution"
+    }
+  ],
+  "createdAt": "2026-03-24T17:56:35.347801+00:00",
+  "updatedAt": "2026-03-24T17:58:06.243222+00:00"
+}

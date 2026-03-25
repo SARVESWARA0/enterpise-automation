@@ -1,19 +1,20 @@
 """
-Enterprise Autopilot — FastAPI Backend
+Enterprise Autopilot — FastAPI Backend.
 Multi-Agent Autonomous Workflow System powered by Strands Agents SDK.
 """
 import asyncio
 import json
 import os
 import sys
+import uuid
 from contextlib import asynccontextmanager
 from typing import Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from sse_starlette.sse import EventSourceResponse
 
 sys.path.insert(0, os.path.dirname(__file__))
 load_dotenv()
@@ -24,7 +25,8 @@ from state_manager import (
     get_audit_logs, get_stream_events, get_dashboard_stats,
     seed_employees, append_stream_event,
 )
-from orchestrator.engine import execute_workflow
+from orchestrator.workflow_engine import run_workflow, sse_stream, get_or_create_queue
+import state_manager
 
 
 @asynccontextmanager
@@ -34,15 +36,15 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Enterprise Autopilot",
+    title="ET Autopilot — PS2 Workflow Engine",
     description="Multi-Agent Autonomous Workflow System",
-    version="3.0.0",
+    version="4.0.0",
     lifespan=lifespan,
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,9 +60,8 @@ class CreateEmployeeRequest(BaseModel):
     department: str
 
 
-class CreateWorkflowRequest(BaseModel):
-    type: str
-    inputData: dict = {}
+class StartWorkflowRequest(BaseModel):
+    request: str
 
 
 # ──────────── DASHBOARD ────────────
@@ -86,26 +87,55 @@ async def get_employees():
 async def post_employee(req: CreateEmployeeRequest, background_tasks: BackgroundTasks):
     emp = create_employee(req.name, req.email, req.role, req.department)
 
-    input_data = {
+    user_request = (
+        f"Onboard new employee: {emp['name']} "
+        f"({emp['role']} in {emp['department']}). "
+        f"Email: {emp['email']}."
+    )
+
+    wf = create_workflow("employee_onboarding", {
         "employeeId": emp["id"],
         "name": emp["name"],
         "email": emp["email"],
         "role": emp["role"],
         "department": emp["department"],
         "triggerEvent": "employee_created",
-    }
+    }, steps=[], entity_id=emp["id"])
 
-    wf = create_workflow("employee_onboarding", input_data, steps=[], entity_id=emp["id"])
     update_employee(emp["id"], {"status": "ONBOARDING"})
-    background_tasks.add_task(_run_workflow, wf["id"])
+
+    # Pre-create SSE queue
+    get_or_create_queue(wf["id"])
+
+    background_tasks.add_task(_run_workflow, wf["id"], user_request)
 
     return {"employee": emp, "workflowId": wf["id"]}
 
 
 # ──────────── WORKFLOWS ────────────
 
+@app.post("/api/workflows/start")
+async def start_workflow(body: StartWorkflowRequest, background_tasks: BackgroundTasks):
+    """Start a workflow and return workflow_id. Frontend then connects to SSE."""
+    workflow_id = str(uuid.uuid4())
+    user_request = body.request
+
+    # Create workflow in state
+    wf = create_workflow("custom_workflow", {
+        "request": user_request,
+        "triggerEvent": "manual",
+    }, steps=[], entity_id=None)
+
+    # Pre-create SSE queue so SSE can connect before runner starts
+    get_or_create_queue(wf["id"])
+
+    background_tasks.add_task(_run_workflow, wf["id"], user_request)
+
+    return {"workflow_id": wf["id"], "status": "started"}
+
+
 @app.get("/api/workflows")
-async def get_workflows(status: Optional[str] = None, type: Optional[str] = None):
+async def get_workflows_list(status: Optional[str] = None, type: Optional[str] = None):
     workflows = list_workflows()
     if status:
         workflows = [w for w in workflows if w.get("status") == status]
@@ -123,13 +153,6 @@ async def get_workflows(status: Optional[str] = None, type: Optional[str] = None
     return workflows
 
 
-@app.post("/api/workflows", status_code=201)
-async def post_workflow(req: CreateWorkflowRequest, background_tasks: BackgroundTasks):
-    wf = create_workflow(req.type, req.inputData or {}, steps=[])
-    background_tasks.add_task(_run_workflow, wf["id"])
-    return {"workflowId": wf["id"], "steps": [], "message": "Workflow created — multi-agent execution started"}
-
-
 @app.get("/api/workflows/{workflow_id}")
 async def get_workflow_detail(workflow_id: str):
     wf = get_workflow(workflow_id)
@@ -143,48 +166,20 @@ async def get_workflow_detail(workflow_id: str):
     return wf
 
 
-@app.post("/api/workflows/{workflow_id}/execute")
-async def execute_workflow_route(workflow_id: str, background_tasks: BackgroundTasks):
-    wf = get_workflow(workflow_id)
-    if not wf:
-        raise HTTPException(status_code=404, detail="Workflow not found")
-    background_tasks.add_task(_run_workflow, workflow_id)
-    return {"message": "Execution started", "workflowId": workflow_id}
-
-
 # ──────────── SSE STREAM ────────────
 
 @app.get("/api/workflows/{workflow_id}/stream")
 async def stream_workflow(workflow_id: str):
-    """SSE endpoint — polls the stream events file for new events in real-time."""
-
-    async def event_generator():
-        last_index = 0
-        yield {
-            "data": json.dumps({
-                "type": "connected",
-                "workflowId": workflow_id,
-                "message": "Connected to workflow stream",
-                "timestamp": "",
-            })
+    """SSE endpoint — frontend connects here for live updates."""
+    return StreamingResponse(
+        sse_stream(workflow_id),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
         }
-
-        max_wait = 600  # 10 min max
-        waited = 0.0
-        while waited < max_wait:
-            events = get_stream_events(workflow_id, after_index=last_index)
-            for event in events:
-                yield {"data": json.dumps(event)}
-                last_index += 1
-
-                # Terminal events
-                if event.get("type") in ("workflow:complete", "workflow:failed"):
-                    return
-
-            await asyncio.sleep(0.3)
-            waited += 0.3
-
-    return EventSourceResponse(event_generator())
+    )
 
 
 # ──────────── AUDIT ────────────
@@ -243,12 +238,16 @@ async def sla_monitor():
 
 # ──────────── Background Runner ────────────
 
-def _run_workflow(workflow_id: str):
+def _run_workflow(workflow_id: str, user_request: str):
     """Run the orchestrator in a background thread with its own event loop."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        loop.run_until_complete(execute_workflow(workflow_id))
+        loop.run_until_complete(run_workflow(
+            workflow_id=workflow_id,
+            user_request=user_request,
+            state_manager=state_manager,
+        ))
     except Exception as e:
         print(f"Workflow execution error: {e}")
         import traceback
@@ -271,4 +270,4 @@ def _run_workflow(workflow_id: str):
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("BACKEND_PORT", "8000"))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)

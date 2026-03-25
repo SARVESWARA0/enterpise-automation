@@ -1,0 +1,112 @@
+[
+  {
+    "decision": "tool_executed",
+    "reason": "Created HR account for Sarah Chen",
+    "actionTaken": "create_hr_account_tool",
+    "agentName": "ExecutionAgent",
+    "toolName": "create_hr_account_tool",
+    "status": "completed",
+    "id": "a56afc96-c7a5-4040-ab53-704f80bb7a32",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:25:48.836202+00:00"
+  },
+  {
+    "decision": "HR account created",
+    "reason": "Creation of HR record for onboarding",
+    "actionTaken": "HR account created",
+    "agentName": "execution",
+    "toolName": "create_hr_account_tool",
+    "status": "completed",
+    "id": "94d1d740-1c95-4780-a2d7-1069c00915a5",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:25:58.486030+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Created email account for Sarah Chen",
+    "actionTaken": "create_email_account_tool",
+    "agentName": "ExecutionAgent",
+    "toolName": "create_email_account_tool",
+    "status": "completed",
+    "id": "1642c426-8ca9-444b-9f42-a16777cb82a3",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:26:06.303823+00:00"
+  },
+  {
+    "decision": "Email account created",
+    "reason": "Provisioning of email account for onboarding",
+    "actionTaken": "Email account created",
+    "agentName": "execution",
+    "toolName": "create_email_account_tool",
+    "status": "completed",
+    "id": "46c3137b-bb11-45a2-ae04-d1b43bdd0d54",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:26:15.052215+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Attempt JIRA account creation for Sarah Chen",
+    "actionTaken": "create_jira_account_tool",
+    "agentName": "ExecutionAgent",
+    "toolName": "create_jira_account_tool",
+    "status": "failed",
+    "id": "c5f3abbe-f13d-4ab7-9671-f599cc6d998a",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:26:23.558457+00:00"
+  },
+  {
+    "decision": "JIRA account creation initiated",
+    "reason": "Provisioning JIRA access for onboarding",
+    "actionTaken": "JIRA account creation attempted",
+    "agentName": "execution",
+    "toolName": "create_jira_account_tool",
+    "status": "pending",
+    "id": "ea48485c-1c40-4a0d-873e-6f6d6c59c22c",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:26:45.699368+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Assigned buddy David Chen to Sarah Chen",
+    "actionTaken": "assign_buddy_tool",
+    "agentName": "ExecutionAgent",
+    "toolName": "assign_buddy_tool",
+    "status": "completed",
+    "id": "9b8b93c4-7e53-49b0-b4e5-761a4bb401c5",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:27:02.440644+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Scheduled orientation for Sarah Chen at 10:00 AM",
+    "actionTaken": "schedule_meeting_tool",
+    "agentName": "ExecutionAgent",
+    "toolName": "schedule_meeting_tool",
+    "status": "completed",
+    "id": "ef6c6067-2d5c-4a01-b990-f6e67d75d58e",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:27:28.272140+00:00"
+  },
+  {
+    "decision": "Onboarding steps completed or scheduled",
+    "reason": "Completion of onboarding setup",
+    "actionTaken": "All onboarding steps scheduled and executed",
+    "agentName": "execution",
+    "toolName": "schedule_meeting_tool",
+    "status": "pending",
+    "id": "adafdb28-6865-4acd-b66f-edb4ab711a29",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:27:40.526370+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Sent welcome email to sarah.chen@company.com",
+    "actionTaken": "send_onboarding_email_tool",
+    "agentName": "ExecutionAgent",
+    "toolName": "send_onboarding_email_tool",
+    "status": "completed",
+    "id": "675b2b40-4d16-4e4d-8d54-39723008b773",
+    "workflowId": "b68af151-b912-4050-ac83-3d7e7cdf5dd5",
+    "timestamp": "2026-03-24T17:28:01.066993+00:00"
+  }
+]

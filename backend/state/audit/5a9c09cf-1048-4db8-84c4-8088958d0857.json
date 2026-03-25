@@ -1,0 +1,57 @@
+[
+  {
+    "decision": "HR account created",
+    "reason": "Successful creation of HR account for onboarding",
+    "actionTaken": "HR account creation",
+    "agentName": "execution",
+    "toolName": "",
+    "status": "completed",
+    "id": "00311494-e07c-48cd-be65-2a373f2e79a1",
+    "workflowId": "5a9c09cf-1048-4db8-84c4-8088958d0857",
+    "timestamp": "2026-03-24T17:37:18.511373+00:00"
+  },
+  {
+    "decision": "Email account created",
+    "reason": "Successful creation of email account for onboarding",
+    "actionTaken": "Email account creation",
+    "agentName": "execution",
+    "toolName": "",
+    "status": "completed",
+    "id": "cbe136c1-0a35-4e55-96fe-e94f20482f79",
+    "workflowId": "5a9c09cf-1048-4db8-84c4-8088958d0857",
+    "timestamp": "2026-03-24T17:37:46.257234+00:00"
+  },
+  {
+    "decision": "JIRA account creation attempted",
+    "reason": "Provisioned JIRA account, may require escalation if fails",
+    "actionTaken": "JIRA account creation",
+    "agentName": "execution",
+    "toolName": "",
+    "status": "completed",
+    "id": "62f4e479-7110-48f2-8039-bf4ff719d0ab",
+    "workflowId": "5a9c09cf-1048-4db8-84c4-8088958d0857",
+    "timestamp": "2026-03-24T17:38:18.209668+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Assigned buddy sarv to Sarah Chen",
+    "actionTaken": "assign_buddy_tool",
+    "agentName": "ExecutionAgent",
+    "toolName": "assign_buddy_tool",
+    "status": "completed",
+    "id": "cc56cc1d-324e-413a-b973-c21eb38e92f2",
+    "workflowId": "5a9c09cf-1048-4db8-84c4-8088958d0857",
+    "timestamp": "2026-03-24T17:38:27.597767+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Scheduled orientation for Sarah Chen at 10:00 AM",
+    "actionTaken": "schedule_meeting_tool",
+    "agentName": "ExecutionAgent",
+    "toolName": "schedule_meeting_tool",
+    "status": "completed",
+    "id": "e02b7a53-745c-45ec-a866-15ccbb68946a",
+    "workflowId": "5a9c09cf-1048-4db8-84c4-8088958d0857",
+    "timestamp": "2026-03-24T17:38:48.388916+00:00"
+  }
+]

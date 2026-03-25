@@ -1,0 +1,412 @@
+{
+  "id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+  "type": "custom_workflow",
+  "entityId": null,
+  "triggerEvent": "manual",
+  "inputData": {
+    "request": "add a new employee ,black,monish.cs23@bitsathy.ac.in, Ai intern",
+    "triggerEvent": "manual"
+  },
+  "status": "ESCALATED",
+  "plan": [
+    {
+      "step_id": 1,
+      "name": "Create HR Account for Employee",
+      "tool_name": "create_hr_account_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "employeeEmail": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 2,
+      "name": "Log creation of HR Account",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "HR account created",
+        "reason": "New employee HR record creation",
+        "action_taken": "Created HR account for monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        1
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 3,
+      "name": "Create Email Account for Employee",
+      "tool_name": "create_email_account_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        2
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 4,
+      "name": "Log creation of Email Account",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "Email account created",
+        "reason": "Provisioned email for new employee",
+        "action_taken": "Created email account for monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        3
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 5,
+      "name": "Create JIRA Account (may require escalation)",
+      "tool_name": "create_jira_account_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        4
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 6,
+      "name": "Log creation of JIRA Account",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "JIRA account creation attempted",
+        "reason": "Provisioning JIRA access for new employee",
+        "action_taken": "Attempted to create JIRA account for monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        5
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 7,
+      "name": "Find Delegate for Employee",
+      "tool_name": "find_delegate",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "department": "Ai intern"
+      },
+      "depends_on": [
+        6
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 8,
+      "name": "Log delegate finding",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "Delegate found",
+        "reason": "Assign mentor/buddy for onboarding",
+        "action_taken": "Found delegate for Ai intern department",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        7
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 9,
+      "name": "Schedule Orientation Meeting",
+      "tool_name": "schedule_meeting_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "participant_email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        8
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 10,
+      "name": "Log scheduling of Meeting",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "Meeting scheduled",
+        "reason": "Orientation session for new employee",
+        "action_taken": "Scheduled orientation for monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        9
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 11,
+      "name": "Assign Buddy",
+      "tool_name": "assign_buddy_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "employee_email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        10
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 12,
+      "name": "Log Buddy Assignment",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "Buddy assigned",
+        "reason": "Mentorship for new employee",
+        "action_taken": "Assigned mentor to monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        11
+      ],
+      "assigned_agent": "execution"
+    },
+    {
+      "step_id": 13,
+      "name": "Send Onboarding Email",
+      "tool_name": "send_onboarding_email_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        12
+      ],
+      "assigned_agent": "execution"
+    }
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "name": "Create HR Account for Employee",
+      "tool_name": "create_hr_account_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "employeeEmail": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 2,
+      "name": "Log creation of HR Account",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "HR account created",
+        "reason": "New employee HR record creation",
+        "action_taken": "Created HR account for monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        1
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 3,
+      "name": "Create Email Account for Employee",
+      "tool_name": "create_email_account_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        2
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 4,
+      "name": "Log creation of Email Account",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "Email account created",
+        "reason": "Provisioned email for new employee",
+        "action_taken": "Created email account for monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        3
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 5,
+      "name": "Create JIRA Account (may require escalation)",
+      "tool_name": "create_jira_account_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        4
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 6,
+      "name": "Log creation of JIRA Account",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "JIRA account creation attempted",
+        "reason": "Provisioning JIRA access for new employee",
+        "action_taken": "Attempted to create JIRA account for monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        5
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 7,
+      "name": "Find Delegate for Employee",
+      "tool_name": "find_delegate",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "department": "Ai intern"
+      },
+      "depends_on": [
+        6
+      ],
+      "assigned_agent": "execution",
+      "status": "ESCALATED"
+    },
+    {
+      "step_id": 8,
+      "name": "Log delegate finding",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "Delegate found",
+        "reason": "Assign mentor/buddy for onboarding",
+        "action_taken": "Found delegate for Ai intern department",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        7
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 9,
+      "name": "Schedule Orientation Meeting",
+      "tool_name": "schedule_meeting_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "participant_email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        8
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 10,
+      "name": "Log scheduling of Meeting",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "Meeting scheduled",
+        "reason": "Orientation session for new employee",
+        "action_taken": "Scheduled orientation for monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        9
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 11,
+      "name": "Assign Buddy",
+      "tool_name": "assign_buddy_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "employee_email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        10
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 12,
+      "name": "Log Buddy Assignment",
+      "tool_name": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "decision": "Buddy assigned",
+        "reason": "Mentorship for new employee",
+        "action_taken": "Assigned mentor to monish.cs23@bitsathy.ac.in",
+        "agent_name": "execution",
+        "status": "success"
+      },
+      "depends_on": [
+        11
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    },
+    {
+      "step_id": 13,
+      "name": "Send Onboarding Email",
+      "tool_name": "send_onboarding_email_tool",
+      "parameters": {
+        "workflow_id": "d09ddc46-9660-4347-b4a2-b36ce124c322",
+        "email": "monish.cs23@bitsathy.ac.in"
+      },
+      "depends_on": [
+        12
+      ],
+      "assigned_agent": "execution",
+      "status": "COMPLETED"
+    }
+  ],
+  "createdAt": "2026-03-24T17:42:05.926096+00:00",
+  "updatedAt": "2026-03-24T17:45:07.785554+00:00"
+}

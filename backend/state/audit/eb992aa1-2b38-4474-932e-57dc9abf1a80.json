@@ -1,0 +1,24 @@
+[
+  {
+    "decision": "HR account created",
+    "reason": "Onboarding of Sarah Chen",
+    "actionTaken": "Created HR record",
+    "agentName": "interpreter",
+    "toolName": "",
+    "status": "completed",
+    "id": "c16e12e8-aa13-4835-ac19-619a43663cbd",
+    "workflowId": "eb992aa1-2b38-4474-932e-57dc9abf1a80",
+    "timestamp": "2026-03-24T17:35:59.084416+00:00"
+  },
+  {
+    "decision": "tool_executed",
+    "reason": "Created email account for Sarah Chen",
+    "actionTaken": "create_email_account_tool",
+    "agentName": "ExecutionAgent",
+    "toolName": "create_email_account_tool",
+    "status": "completed",
+    "id": "8e4478eb-51f9-4b15-97b1-82d95449c0bc",
+    "workflowId": "eb992aa1-2b38-4474-932e-57dc9abf1a80",
+    "timestamp": "2026-03-24T17:36:08.472664+00:00"
+  }
+]
