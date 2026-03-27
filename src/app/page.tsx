@@ -1,80 +1,93 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const SCENARIOS = [
   {
-    icon: '🧑‍💼',
-    title: 'Onboard a New Employee',
-    desc: 'Auto-create HR, email, JIRA accounts, assign buddy, schedule orientation, and send welcome email.',
-    request: 'Onboard Sarah Chen, joining Engineering team, starting Monday. Email: sarah.chen@company.com',
+
+    title: "Employee Onboarding",
+    desc: "Full autonomous onboarding: HR account, email, JIRA, buddy assignment, orientation, welcome email.",
+    request: "Onboard Priya Sharma as a new Software Engineer in the Engineering department. Her email is priya.sharma@company.com.",
+    name: "Priya Sharma",
+    email: "priya.sharma@company.com",
+    role: "Software Engineer",
+    department: "Engineering",
+    trigger: "employee_onboarding",
   },
   {
-    icon: '📋',
-    title: 'Process Meeting Transcript',
-    desc: 'Extract action items from a meeting, assign owners, create tasks, and send summary.',
-    request: 'Process this meeting transcript: [John: I\'ll fix the login bug by Friday. Sarah: I\'ll prepare the Q3 report. Action: Team sync needed next week - owner unclear]',
+
+    title: "Meeting Action Items",
+    desc: "Extract action items from transcript, create tasks for each, and send a summary email to stakeholders.",
+    request: "Process this meeting transcript: Sprint planning discussed UI refresh (Alice), API migration (Bob), deadline Friday. Carol to update staging. David to review security. Send summary to team.",
+    trigger: "meeting_action_items",
   },
   {
-    icon: '⏱️',
-    title: 'Resolve SLA Breach',
-    desc: 'Detect stuck approvals, reroute to delegates, escalate if needed, and log audit trail.',
-    request: 'Procurement approval for vendor contract #VC-2024 has been stuck for 48 hours. Original approver is on leave.',
+
+    title: "SLA Breach Response",
+    desc: "Detect SLA breach, find delegate, reroute approval, and log audit trail for compliance.",
+    request: "SLA breach detected for ticket PROD-4521 in Engineering department. The original assignee is on leave. Reroute and escalate appropriately.",
+    trigger: "sla_breach",
   },
 ];
 
 export default function LandingPage() {
-  const [customRequest, setCustomRequest] = useState('');
+  const [selected, setSelected] = useState<number | null>(null);
+  const [customRequest, setCustomRequest] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function startWorkflow(request: string) {
-    if (!request.trim()) return;
+  const handleRun = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/workflows/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ request }),
+      const scenario = selected !== null ? SCENARIOS[selected] : null;
+      const body = scenario
+        ? {
+            request: scenario.request,
+            trigger: scenario.trigger,
+            name: scenario.name || null,
+            email: scenario.email || null,
+            role: scenario.role || null,
+            department: scenario.department || null,
+          }
+        : { request: customRequest, trigger: "manual" };
+
+      const res = await fetch(`${API}/api/workflows/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (data.workflow_id) {
-        router.push(`/workflows/${data.workflow_id}`);
-      }
+      router.push(`/workflows/${data.workflowId}`);
     } catch (err) {
-      console.error('Failed to start workflow:', err);
+      console.error("Failed to start workflow:", err);
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="landing">
-      {/* Hero */}
       <div className="landing-hero">
-        <h1>ET Autopilot</h1>
+        <h1>Enterprise Autopilot</h1>
         <p>
-          Multi-agent AI that plans, executes, verifies and recovers —
-          with zero hand-holding.
-        </p>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          Powered by Strands Multi-Agent SDK · PS2 Agentic Enterprise Workflows
+          Multi-agent AI that plans, executes, verifies, and recovers enterprise
+          workflows autonomously — with <strong>zero hand-holding</strong>.
         </p>
         <div className="metric-banner">
-          ⚡ Saves ~4.5 hours per employee onboarding · 87% autonomous completion rate
+          <span className="pulse-dot" style={{ background: "#10b981" }} />
+          ET AI Hackathon 2026 — PS2: Agentic AI
         </div>
       </div>
 
-      {/* Scenario Tiles */}
       <div className="scenario-grid">
         {SCENARIOS.map((s, i) => (
           <div
             key={i}
-            className="scenario-card"
-            onClick={() => {
-              setCustomRequest(s.request);
-              startWorkflow(s.request);
-            }}
+            className={`scenario-card${selected === i ? " active" : ""}`}
+            onClick={() => { setSelected(i); setCustomRequest(""); }}
+            style={selected === i ? { borderColor: "var(--accent)", boxShadow: "0 0 20px rgba(99,102,241,0.15)" } : {}}
           >
             <div className="scenario-icon">{s.icon}</div>
             <div className="scenario-title">{s.title}</div>
@@ -83,39 +96,31 @@ export default function LandingPage() {
         ))}
       </div>
 
-      {/* Custom Input */}
       <div className="custom-input-area">
         <input
           className="input-field"
-          placeholder="Or describe your own workflow..."
+          placeholder="Or describe a custom workflow..."
           value={customRequest}
-          onChange={(e) => setCustomRequest(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && startWorkflow(customRequest)}
-          disabled={loading}
+          onChange={(e) => { setCustomRequest(e.target.value); setSelected(null); }}
         />
-        <button
-          className="btn-primary"
-          onClick={() => startWorkflow(customRequest)}
-          disabled={loading || !customRequest.trim()}
-        >
-          {loading ? (
-            <><span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} /> Starting...</>
-          ) : (
-            <>▶ Start</>
-          )}
-        </button>
       </div>
 
-      {/* Subtle Footer */}
-      <div style={{
-        color: 'var(--text-muted)',
-        fontSize: '0.65rem',
-        fontFamily: 'var(--font-mono)',
-        textAlign: 'center',
-        marginTop: '20px',
-      }}>
-        ET AI Hackathon 2026 · Problem Statement 2 · Agentic AI for Autonomous Enterprise Workflows
-      </div>
+      <button
+        className="btn-primary"
+        disabled={loading || (selected === null && !customRequest.trim())}
+        onClick={handleRun}
+        style={{ minWidth: 200 }}
+      >
+        {loading ? (
+          <>
+            <div className="spinner" /> Starting...
+          </>
+        ) : (
+          "Run Workflow"
+        )}
+      </button>
+
+      
     </div>
   );
 }

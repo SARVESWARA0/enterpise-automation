@@ -1,169 +1,253 @@
-'use client';
+"use client";
 
-import { useEffect, useState, use } from 'react';
-import AgentStream from '../../components/AgentStream';
-import ExecutionPlan from '../../components/ExecutionPlan';
-import AgentRoster from '../../components/AgentRoster';
-import AuditTrail from '../../components/AuditTrail';
+import { useEffect, useReducer, useRef, useState } from "react";
+import { useParams } from "next/navigation";
+import ExecutionPlan from "../../components/ExecutionPlan";
+import AgentStream from "../../components/AgentStream";
+import AgentRoster from "../../components/AgentRoster";
+import AuditTrail from "../../components/AuditTrail";
+
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 interface StreamEvent {
   event_type: string;
   agent: string;
-  step_id?: number | null;
+  step_id?: string;
   data: any;
   timestamp: string;
 }
 
-interface PlanStep {
+interface Step {
   step_id: number;
   name: string;
   tool_name: string;
-  status?: string;
+  status: string;
 }
 
-export default function WorkflowDashboard({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const [events, setEvents] = useState<StreamEvent[]>([]);
-  const [steps, setSteps] = useState<PlanStep[]>([]);
-  const [workflowStatus, setWorkflowStatus] = useState('STARTING');
-  const [showModal, setShowModal] = useState(false);
-  const [summary, setSummary] = useState<any>(null);
+interface AgentState {
+  active: boolean;
+  action: string;
+}
 
-  // SSE Connection
+interface DashState {
+  status: string;
+  steps: Step[];
+  events: StreamEvent[];
+  agents: Record<string, AgentState>;
+  summary: any;
+}
+
+type DashAction =
+  | StreamEvent
+  | {
+      type: "hydrate";
+      payload: DashState;
+    };
+
+const INITIAL: DashState = {
+  status: "CONNECTING",
+  steps: [],
+  events: [],
+  agents: {
+    interpreter: { active: false, action: "Idle" },
+    execution: { active: false, action: "Idle" },
+    verification: { active: false, action: "Idle" },
+    recovery: { active: false, action: "Idle" },
+  },
+  summary: null,
+};
+
+function reducer(state: DashState, action: DashAction): DashState {
+  if ("type" in action && action.type === "hydrate") {
+    return action.payload;
+  }
+
+  const event = action as StreamEvent;
+  const next = { ...state, events: [...state.events, event] };
+
+  switch (event.event_type) {
+    case "plan":
+      next.status = "RUNNING";
+      next.steps = (event.data?.steps || []).map((s: any) => ({
+        step_id: s.step_id,
+        name: s.name,
+        tool_name: s.tool_name,
+        status: "PENDING",
+      }));
+      break;
+
+    case "step_start":
+      next.status = "RUNNING";
+      next.steps = next.steps.map((s) =>
+        s.step_id === event.data?.step_id ? { ...s, status: "RUNNING" } : s
+      );
+      break;
+
+    case "step_complete":
+      next.steps = next.steps.map((s) =>
+        s.step_id === event.data?.step_id
+          ? { ...s, status: event.data?.status || "COMPLETED" }
+          : s
+      );
+      break;
+
+    case "step_failed":
+      next.steps = next.steps.map((s) =>
+        s.step_id === event.data?.step_id
+          ? { ...s, status: event.data?.status || "FAILED" }
+          : s
+      );
+      break;
+
+    case "agent_active":
+      next.agents = {
+        ...next.agents,
+        [event.agent]: {
+          active: event.data?.active ?? false,
+          action: event.data?.action || "Idle",
+        },
+      };
+      break;
+
+    case "workflow_complete":
+      next.status = event.data?.status || "COMPLETED";
+      next.summary = event.data;
+      break;
+  }
+
+  return next;
+}
+
+export default function WorkflowDashboard() {
+  const params = useParams();
+  const workflowId = params.id as string;
+  const [state, dispatch] = useReducer(reducer, INITIAL);
+  const eventSourceRef = useRef<EventSource | null>(null);
+
   useEffect(() => {
-    // Connect directly to backend — Next.js rewrites buffer SSE responses
-    const backendUrl = typeof window !== 'undefined'
-      ? `http://${window.location.hostname}:8000`
-      : 'http://localhost:8000';
-    const es = new EventSource(`${backendUrl}/api/workflows/${id}/stream`);
+    if (!workflowId) return;
 
-    es.onmessage = (e) => {
+    let isActive = true;
+    eventSourceRef.current?.close();
+
+    const init = async () => {
       try {
-        const event: StreamEvent = JSON.parse(e.data);
+        const wfRes = await fetch(`${API}/api/workflows/${workflowId}`);
+        if (!wfRes.ok) throw new Error("Workflow fetch failed");
+        const wf = await wfRes.json();
 
-        // Skip heartbeats
-        if (event.event_type === 'heartbeat') return;
+        const terminalStatuses = ["COMPLETED", "FAILED", "ESCALATED"];
+        if (terminalStatuses.includes(wf.status)) {
+          const eventsRes = await fetch(`${API}/api/workflows/${workflowId}/events`);
+          const eventsPayload = eventsRes.ok ? await eventsRes.json() : { events: [] };
+          const historicalEvents: StreamEvent[] = Array.isArray(eventsPayload?.events)
+            ? eventsPayload.events
+            : [];
 
-        setEvents(prev => [...prev, event]);
+          let hydrated = INITIAL;
+          for (const event of historicalEvents) {
+            if (!event?.event_type || event.event_type === "heartbeat") continue;
+            hydrated = reducer(hydrated, event);
+          }
 
-        // Update plan steps when we get a plan event
-        if (event.event_type === 'plan' && event.data?.steps) {
-          setSteps(event.data.steps.map((s: any) => ({
-            ...s,
-            status: 'PENDING',
-          })));
-          setWorkflowStatus('RUNNING');
+          if (!terminalStatuses.includes(hydrated.status)) {
+            hydrated = {
+              ...hydrated,
+              status: wf.status,
+              summary: hydrated.summary ?? {
+                status: wf.status,
+                summary: "Loaded saved workflow execution.",
+              },
+            };
+          }
+
+          if (isActive) {
+            dispatch({ type: "hydrate", payload: hydrated });
+          }
+          return;
         }
 
-        // Update step statuses
-        if (event.event_type === 'step_start' && event.step_id != null) {
-          setSteps(prev => prev.map(s =>
-            s.step_id === event.step_id ? { ...s, status: 'RUNNING' } : s
-          ));
-        }
-        if (event.event_type === 'step_complete' && event.data?.step_id != null) {
-          setSteps(prev => prev.map(s =>
-            s.step_id === event.data.step_id ? { ...s, status: 'COMPLETED' } : s
-          ));
-        }
-        if (event.event_type === 'step_failed' && event.data?.step_id != null) {
-          const newStatus = event.data.status || 'FAILED';
-          setSteps(prev => prev.map(s =>
-            s.step_id === event.data.step_id ? { ...s, status: newStatus } : s
-          ));
-        }
+        const es = new EventSource(`${API}/api/workflows/${workflowId}/stream`);
+        eventSourceRef.current = es;
 
-        // Workflow complete
-        if (event.event_type === 'workflow_complete') {
-          setWorkflowStatus(event.data?.status || 'COMPLETED');
-          setSummary(event.data);
-          setShowModal(true);
-          es.close();
-        }
-      } catch {
-        // ignore parse errors
+        es.onmessage = (e) => {
+          try {
+            const event: StreamEvent = JSON.parse(e.data);
+            if (event.event_type === "heartbeat") return;
+            dispatch(event);
+            if (event.event_type === "workflow_complete") {
+              es.close();
+            }
+          } catch (err) {
+            console.error("SSE parse error:", err);
+          }
+        };
+
+        es.onerror = () => {
+          console.warn("SSE connection lost");
+        };
+      } catch (err) {
+        console.error("Failed to initialize workflow view:", err);
       }
     };
 
-    es.onerror = () => {
-      // EventSource auto-reconnects
+    init();
+
+    return () => {
+      isActive = false;
+      eventSourceRef.current?.close();
     };
+  }, [workflowId]);
 
-    return () => es.close();
-  }, [id]);
-
-  const completedCount = steps.filter(s => s.status === 'COMPLETED').length;
-  const activeStep = steps.find(s => s.status === 'RUNNING');
-
+  const completedSteps = state.steps.filter((s) => s.status === "COMPLETED").length;
+  const totalSteps = state.steps.length;
+  const pct = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      {/* Header Bar */}
+    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      {/* Header */}
       <div className="dash-header">
         <div className="logo">
-          <span className="accent">ET</span> AUTOPILOT
-          <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem', fontWeight: 400 }}>
-            · Workflow #{id.substring(0, 8)}
+          <span className="accent">⚡</span> ET Autopilot
+          <span style={{ color: "var(--text-muted)", fontWeight: 400, fontSize: "0.7rem", marginLeft: 8 }}>
+            v2 • Graph Orchestration
           </span>
         </div>
         <div className="meta">
-          <span className={`badge badge-${workflowStatus.toLowerCase()}`}>
-            {workflowStatus === 'RUNNING' && <span className="pulse-dot" style={{ background: 'var(--info)' }} />}
-            {workflowStatus}
+          <span className={`badge badge-${state.status.toLowerCase()}`}>
+            {state.status === "RUNNING" && <span className="pulse-dot" style={{ background: "var(--info)" }} />}
+            {state.status}
           </span>
-          {steps.length > 0 && (
-            <span>{completedCount}/{steps.length} steps</span>
+          {totalSteps > 0 && (
+            <span>{completedSteps}/{totalSteps} steps</span>
           )}
+          <a href="/" style={{ color: "var(--text-muted)", textDecoration: "none", fontSize: "0.75rem" }}>← Home</a>
         </div>
       </div>
 
-      {/* 4-Panel Grid */}
-      <div className="dashboard-grid">
-        <ExecutionPlan
-          steps={steps}
-          activeStepId={activeStep?.step_id}
-        />
-        <AgentStream events={events} />
-        <AgentRoster events={events} />
-        <AuditTrail events={events} />
-      </div>
-
-      {/* Workflow Complete Modal */}
-      {showModal && summary && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2 style={{ color: summary.status === 'COMPLETED' ? 'var(--success)' : 'var(--recovery)' }}>
-              {summary.status === 'COMPLETED' ? '🎉 Workflow Complete' : '⚠️ Workflow Finished'}
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '20px', fontSize: '0.85rem' }}>
-              {summary.summary}
-            </p>
-            <div className="stat-row">
-              <span className="label">Total Steps</span>
-              <span className="value">{summary.total_steps}</span>
-            </div>
-            <div className="stat-row">
-              <span className="label">Completed</span>
-              <span className="value" style={{ color: 'var(--success)' }}>{summary.completed}</span>
-            </div>
-            <div className="stat-row">
-              <span className="label">Escalated</span>
-              <span className="value" style={{ color: 'var(--recovery)' }}>{summary.escalated}</span>
-            </div>
-            <div className="stat-row">
-              <span className="label">Failed</span>
-              <span className="value" style={{ color: 'var(--danger)' }}>{summary.failed}</span>
-            </div>
-            <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
-              <button className="btn-primary" onClick={() => window.location.href = '/'}>
-                ← New Workflow
-              </button>
-              <button className="btn-secondary" onClick={() => setShowModal(false)}>
-                View Details
-              </button>
-            </div>
+      {/* Progress */}
+      {totalSteps > 0 && (
+        <div style={{ padding: "0 16px" }}>
+          <div className="progress-bar-bg">
+            <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
           </div>
         </div>
       )}
+
+      {/* 4-Panel Grid */}
+      <div className="dashboard-grid">
+        <div className="panel plan-panel">
+          <ExecutionPlan steps={state.steps} />
+        </div>
+        <div className="panel stream-panel">
+          <AgentStream events={state.events} />
+        </div>
+        <div className="panel roster-panel">
+          <AgentRoster agents={state.agents} />
+        </div>
+        <div className="panel audit-panel">
+          <AuditTrail events={state.events} />
+        </div>
+      </div>
     </div>
   );
 }

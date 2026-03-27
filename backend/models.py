@@ -14,7 +14,8 @@ class WorkflowStep(BaseModel):
     parameters: dict
     assigned_agent: str = "execution"
     depends_on: list[int] = []
-    status: Literal["PENDING", "RUNNING", "COMPLETED", "FAILED", "ESCALATED", "SKIPPED"] = "PENDING"
+    fallback: Literal["ESCALATE", "RETRY", "SKIP"] = "ESCALATE"
+    status: Literal["PENDING", "RUNNING", "COMPLETED", "FAILED", "ESCALATED", "SKIPPED", "RETRIED"] = "PENDING"
     result: Optional[Any] = None
     error: Optional[str] = None
     retry_count: int = 0
@@ -35,10 +36,28 @@ class WorkflowPlan(BaseModel):
 class SSEEvent(BaseModel):
     event_type: str
     agent: str
-    step_id: Optional[int] = None
+    step_id: Optional[str] = None
     data: Any = None
     timestamp: str = ""
 
     def model_post_init(self, __context: Any) -> None:
         if not self.timestamp:
             self.timestamp = datetime.now(timezone.utc).isoformat()
+
+
+class OnboardingRequest(BaseModel):
+    name: str
+    email: str
+    role: str
+    department: str
+    trigger: str = "employee_onboarding"
+
+
+class WorkflowStartRequest(BaseModel):
+    """Generic workflow trigger."""
+    request: str
+    trigger: str = "manual"
+    name: Optional[str] = None
+    email: Optional[str] = None
+    role: Optional[str] = None
+    department: Optional[str] = None

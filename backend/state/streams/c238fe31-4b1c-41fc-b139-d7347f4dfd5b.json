@@ -1,0 +1,21 @@
+[
+  {
+    "event_type": "agent_message",
+    "agent": "interpreter",
+    "step_id": null,
+    "data": {
+      "message": "Analyzing request: \"Scheduled weekly work updates meeting for Arun and Sarveswara from employee table geet their email\"\nGenerating execution plan..."
+    },
+    "timestamp": "2026-03-26T10:54:01.846444+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "interpreter",
+    "step_id": null,
+    "data": {
+      "active": true,
+      "action": "Generating plan"
+    },
+    "timestamp": "2026-03-26T10:54:01.848786+00:00"
+  }
+]

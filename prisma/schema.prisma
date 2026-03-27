@@ -35,16 +35,18 @@ enum StepStatus {
 }
 
 model Employee {
-  id         String         @id @default(uuid())
-  employeeId String?        @map("employee_id")
-  name       String
-  email      String         @unique
-  role       String
-  department String
-  status     EmployeeStatus @default(PENDING)
-  createdAt  DateTime       @default(now()) @map("created_at")
-  updatedAt  DateTime       @updatedAt @map("updated_at")
-  workflows  Workflow[]
+  id           String         @id @default(uuid())
+  employeeId   String?        @map("employee_id")
+  name         String
+  email        String         @unique
+  companyEmail String?        @map("company_email")
+  role         String
+  department   String
+  buddy        String?
+  status       EmployeeStatus @default(PENDING)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  workflows    Workflow[]
 
   @@map("employees")
 }

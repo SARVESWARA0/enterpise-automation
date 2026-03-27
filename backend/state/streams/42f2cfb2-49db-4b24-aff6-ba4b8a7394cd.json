@@ -1,0 +1,2794 @@
+[
+  {
+    "event_type": "agent_message",
+    "agent": "interpreter",
+    "step_id": null,
+    "data": {
+      "message": "Analyzing request: \"alter the status of EMP-5169 to ACTIVE from employee table \"\nGenerating execution plan..."
+    },
+    "timestamp": "2026-03-27T05:52:04.309042+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "interpreter",
+    "step_id": null,
+    "data": {
+      "active": true,
+      "action": "Generating plan"
+    },
+    "timestamp": "2026-03-27T05:52:04.310436+00:00"
+  },
+  {
+    "event_type": "plan",
+    "agent": "interpreter",
+    "step_id": null,
+    "data": {
+      "steps": [
+        {
+          "step_id": 1,
+          "name": "Update employee status to ACTIVE",
+          "tool_name": "execute_sql",
+          "parameters": {
+            "query": "UPDATE employees SET status = 'ACTIVE', updated_at = NOW() WHERE LOWER(employee_id) = LOWER('EMP-5169')"
+          },
+          "depends_on": [],
+          "assigned_agent": "execution",
+          "fallback": "RETRY"
+        },
+        {
+          "step_id": 2,
+          "name": "Log status update in audit",
+          "tool_name": "log_audit_entry",
+          "parameters": {
+            "workflow_id": "",
+            "decision": "COMPLETED",
+            "reason": "Employee EMP-5169 status updated to ACTIVE",
+            "action_taken": "Status changed to ACTIVE in employee table",
+            "agent_name": "execution",
+            "tool_name": "execute_sql",
+            "status": "info"
+          },
+          "depends_on": [
+            1
+          ],
+          "assigned_agent": "execution",
+          "fallback": "RETRY"
+        }
+      ],
+      "total": 2
+    },
+    "timestamp": "2026-03-27T05:52:11.298980+00:00"
+  },
+  {
+    "event_type": "agent_message",
+    "agent": "interpreter",
+    "step_id": null,
+    "data": {
+      "message": "\u2705 Plan generated: 2 steps identified. Beginning execution..."
+    },
+    "timestamp": "2026-03-27T05:52:11.311965+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "interpreter",
+    "step_id": null,
+    "data": {
+      "active": false
+    },
+    "timestamp": "2026-03-27T05:52:11.329212+00:00"
+  },
+  {
+    "event_type": "step_start",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "step_id": 1,
+      "name": "Update employee status to ACTIVE",
+      "tool": "execute_sql",
+      "parameters": {
+        "query": "UPDATE employees SET status = 'ACTIVE', updated_at = NOW() WHERE LOWER(employee_id) = LOWER('EMP-5169')"
+      }
+    },
+    "timestamp": "2026-03-27T05:52:17.547105+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "execution",
+    "step_id": null,
+    "data": {
+      "active": true,
+      "action": "execute_sql: Update employee status to ACTIVE"
+    },
+    "timestamp": "2026-03-27T05:52:17.556200+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "active": true,
+      "action": "Resolving context for execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:17.573020+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "{\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.142943+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.154850+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.170539+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "resolved",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.185546+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "_parameters",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.203705+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.221203+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " {\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.235044+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "   ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.251294+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.267090+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "query",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.281338+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.296682+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.311037+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "UPDATE",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.326188+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " employees",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.342282+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " SET",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.356679+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " status",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.370320+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " =",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.384987+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " '",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.401470+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "ACTIVE",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.418434+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "',",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.433864+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " updated",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.449136+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "_at",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.463873+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " =",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.481536+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " NOW",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.497472+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "()",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.513490+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " WHERE",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.528350+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " LOWER",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.545735+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "(employee",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.559440+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "_id",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.576498+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": ")",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.594739+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " =",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.609783+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " LOWER",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.622631+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "('",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.636494+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "EMP",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.652717+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "-",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.669521+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "516",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.684015+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "9",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.699421+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "')",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.711882+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "\"\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.726499+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.741653+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " },\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.759075+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.775485+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.794406+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "context",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.810707+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "_updates",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.828388+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.844509+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " {},\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.859963+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.876104+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.893811+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "missing",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.908743+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "_required",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.924077+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.940402+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " [],\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.954553+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.968529+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.981983+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "reason",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:19.996964+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.012840+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.025689+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "The",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.038106+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " query",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.057755+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " parameter",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.076323+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " is",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.092605+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " already",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.105390+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " provided",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.121432+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " and",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.135782+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " fully",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.153715+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " resolves",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.171578+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " the",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.187302+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " step",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.207567+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "'s",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.227211+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " purpose",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.243704+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": ",",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.263725+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " so",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.284100+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " no",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.303157+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " additional",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.322543+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " context",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.337478+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " resolution",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.350213+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " is",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.364800+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": " necessary",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.380208+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": ".\"\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.392988+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "chunk": "}",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:20.408460+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "context_handler",
+    "step_id": "1",
+    "data": {
+      "active": false
+    },
+    "timestamp": "2026-03-27T05:52:20.426703+00:00"
+  },
+  {
+    "event_type": "tool_call",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "tool": "execute_sql",
+      "parameters": {
+        "query": "UPDATE employees SET status = 'ACTIVE', updated_at = NOW() WHERE LOWER(employee_id) = LOWER('EMP-5169')"
+      },
+      "attempt": 1
+    },
+    "timestamp": "2026-03-27T05:52:20.445616+00:00"
+  },
+  {
+    "event_type": "agent_tool_start",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "tool": "execute_sql",
+      "input": ""
+    },
+    "timestamp": "2026-03-27T05:52:23.436946+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "{\n",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.683273+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " ",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.697196+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.715727+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "status",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.734054+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.752110+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.768758+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "SUCCESS",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.785289+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "\",\n",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.803833+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " ",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.816515+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.830764+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "tool",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.845942+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "_called",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.860139+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.874274+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.887023+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "execute",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.899655+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "_sql",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.917983+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "\",\n",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.935034+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " ",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.953439+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.970892+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "output",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:25.989335+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.005519+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " null",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.022374+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": ",\n",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.037029+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " ",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.058963+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.077462+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "error",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.093560+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.108405+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": " null",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.127116+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "\n",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.144446+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "chunk": "}",
+      "tool_context": "execute_sql"
+    },
+    "timestamp": "2026-03-27T05:52:26.159014+00:00"
+  },
+  {
+    "event_type": "tool_result",
+    "agent": "execution",
+    "step_id": "1",
+    "data": {
+      "status": "SUCCESS",
+      "tool_called": "execute_sql",
+      "output": null,
+      "error": null
+    },
+    "timestamp": "2026-03-27T05:52:26.177323+00:00"
+  },
+  {
+    "event_type": "agent_message",
+    "agent": "verification",
+    "step_id": "1",
+    "data": {
+      "verdict": "VERIFIED",
+      "reason": "Deterministic: success=true and no error fields",
+      "confidence": 1.0,
+      "message": "\u2705 execute_sql verified (deterministic bypass)"
+    },
+    "timestamp": "2026-03-27T05:52:26.198435+00:00"
+  },
+  {
+    "event_type": "step_complete",
+    "agent": "verification",
+    "step_id": "1",
+    "data": {
+      "step_id": 1,
+      "name": "Update employee status to ACTIVE",
+      "output": null
+    },
+    "timestamp": "2026-03-27T05:52:26.217202+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "execution",
+    "step_id": null,
+    "data": {
+      "active": false
+    },
+    "timestamp": "2026-03-27T05:52:26.234533+00:00"
+  },
+  {
+    "event_type": "step_start",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "step_id": 2,
+      "name": "Log status update in audit",
+      "tool": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "",
+        "decision": "COMPLETED",
+        "reason": "Employee EMP-5169 status updated to ACTIVE",
+        "action_taken": "Status changed to ACTIVE in employee table",
+        "agent_name": "execution",
+        "tool_name": "execute_sql",
+        "status": "info"
+      }
+    },
+    "timestamp": "2026-03-27T05:52:29.376602+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "execution",
+    "step_id": null,
+    "data": {
+      "active": true,
+      "action": "log_audit_entry: Log status update in audit"
+    },
+    "timestamp": "2026-03-27T05:52:29.389599+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "active": true,
+      "action": "Resolving context for log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:29.410924+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "{\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.240905+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.263555+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.279322+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "resolved",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.298519+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "_parameters",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.318562+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.337948+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " {\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.356236+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "   ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.375816+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.394823+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "workflow",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.413814+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "_id",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.430479+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.449458+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"\"\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.469160+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.487580+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " },\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.506924+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.524853+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.542652+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "context",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.557175+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "_updates",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.575566+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.591371+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " {},\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.606280+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.623121+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.641943+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "missing",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.660859+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "_required",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.680171+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.696669+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " [\"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.715681+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "workflow",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.732523+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "_id",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.748312+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "\"],\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.767361+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " ",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.785198+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.805582+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "reason",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.826118+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.845049+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.865490+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "The",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.886264+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " workflow",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.903733+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "_id",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.923864+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " is",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.939989+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " missing",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.958704+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " and",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.979262+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " must",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:31.994892+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " be",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.014737+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " resolved",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.034676+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " from",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.054976+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " the",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.072963+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " current",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.087826+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " context",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.109227+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": ",",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.126624+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " which",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.145272+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " is",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.167759+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " empty",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.186166+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": ",",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.203724+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " indicating",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.221154+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " it",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.238392+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " needs",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.260783+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " to",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.278994+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " be",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.295779+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " retrieved",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.313189+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " or",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.328128+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " passed",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.344041+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": " in",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.357816+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": ".\"\n",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.377481+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "chunk": "}",
+      "tool_context": null
+    },
+    "timestamp": "2026-03-27T05:52:32.396918+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "context_handler",
+    "step_id": "2",
+    "data": {
+      "active": false
+    },
+    "timestamp": "2026-03-27T05:52:32.420837+00:00"
+  },
+  {
+    "event_type": "tool_call",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "tool": "log_audit_entry",
+      "parameters": {
+        "workflow_id": "42f2cfb2-49db-4b24-aff6-ba4b8a7394cd",
+        "decision": "COMPLETED",
+        "reason": "Employee EMP-5169 status updated to ACTIVE",
+        "action_taken": "Status changed to ACTIVE in employee table",
+        "agent_name": "execution",
+        "tool_name": "execute_sql",
+        "status": "info"
+      },
+      "attempt": 1
+    },
+    "timestamp": "2026-03-27T05:52:32.438863+00:00"
+  },
+  {
+    "event_type": "agent_tool_start",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "tool": "log_audit_entry",
+      "input": ""
+    },
+    "timestamp": "2026-03-27T05:52:35.772593+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "{\n",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.063967+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " ",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.077437+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.343160+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "status",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.355112+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.373978+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.395719+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "SUCCESS",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.413323+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\",\n",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.435051+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " ",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.453964+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.474528+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "tool",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.497701+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "_called",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.517890+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.539773+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.562875+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "functions",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.582863+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": ".log",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.601995+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "_a",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.624788+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "udit",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.643392+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "_entry",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.666131+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\",\n",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.685029+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " ",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.706939+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.725737+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "output",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.740699+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.758440+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " {\"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.778636+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "success",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.796742+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.819200+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " true",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.837638+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": ",",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.862404+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.882312+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "audit",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.902887+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "Id",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.919130+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.937752+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.955769+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "e",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.975204+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "257",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:38.993247+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "ede",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.012869+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "3",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.035253+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "-",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.051600+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "744",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.075830+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "e",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.095680+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "-",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.115173+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "47",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.133885+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "c",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.152658+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "0",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.171270+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "-",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.190016+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "94",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.203435+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "b",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.221255+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "6",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.238171+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "-",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.251834+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "4",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.270569+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "ea",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.292274+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "666",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.310252+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "858",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.327411+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "035",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.343390+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\",",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.363564+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.382653+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "message",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.403208+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.425279+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.445511+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "Audit",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.461854+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " entry",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.480478+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " recorded",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.494962+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\"},\n",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.514069+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " ",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.535033+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " \"",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.556510+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "error",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.576745+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\":",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.597334+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": " null",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.618308+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "\n",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.638372+00:00"
+  },
+  {
+    "event_type": "token_stream",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "chunk": "}",
+      "tool_context": "log_audit_entry"
+    },
+    "timestamp": "2026-03-27T05:52:39.656817+00:00"
+  },
+  {
+    "event_type": "tool_result",
+    "agent": "execution",
+    "step_id": "2",
+    "data": {
+      "status": "SUCCESS",
+      "tool_called": "functions.log_audit_entry",
+      "output": {
+        "success": true,
+        "auditId": "e257ede3-744e-47c0-94b6-4ea666858035",
+        "message": "Audit entry recorded"
+      },
+      "error": null
+    },
+    "timestamp": "2026-03-27T05:52:39.682131+00:00"
+  },
+  {
+    "event_type": "agent_message",
+    "agent": "verification",
+    "step_id": "2",
+    "data": {
+      "verdict": "VERIFIED",
+      "reason": "Deterministic: success=true and no error fields",
+      "confidence": 1.0,
+      "message": "\u2705 log_audit_entry verified (deterministic bypass)"
+    },
+    "timestamp": "2026-03-27T05:52:39.708604+00:00"
+  },
+  {
+    "event_type": "step_complete",
+    "agent": "verification",
+    "step_id": "2",
+    "data": {
+      "step_id": 2,
+      "name": "Log status update in audit",
+      "output": {
+        "success": true,
+        "auditId": "e257ede3-744e-47c0-94b6-4ea666858035",
+        "message": "Audit entry recorded"
+      }
+    },
+    "timestamp": "2026-03-27T05:52:39.731517+00:00"
+  },
+  {
+    "event_type": "agent_active",
+    "agent": "execution",
+    "step_id": null,
+    "data": {
+      "active": false
+    },
+    "timestamp": "2026-03-27T05:52:39.753783+00:00"
+  },
+  {
+    "event_type": "workflow_complete",
+    "agent": "orchestrator",
+    "step_id": null,
+    "data": {
+      "status": "COMPLETED",
+      "total_steps": 2,
+      "completed": 2,
+      "escalated": 0,
+      "failed": 0,
+      "summary": "Workflow finished: 2/2 steps completed autonomously. 0 escalated to humans."
+    },
+    "timestamp": "2026-03-27T05:52:40.081213+00:00"
+  }
+]

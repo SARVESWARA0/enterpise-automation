@@ -1,8 +1,0 @@
-[
-  {
-    "type": "workflow:failed",
-    "workflowId": "b5b0cde3-3c06-41f3-b70f-3c297a994216",
-    "message": "Workflow failed: Agent.__init__() got an unexpected keyword argument 'max_steps'",
-    "timestamp": "2026-03-24T17:39:59.896218+00:00"
-  }
-]
