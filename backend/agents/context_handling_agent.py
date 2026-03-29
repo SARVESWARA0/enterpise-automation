@@ -1,15 +1,10 @@
 """
 Context Handling Agent — resolves step parameters from workflow context.
 """
-import os
-
 from strands import Agent
-from strands.models.openai import OpenAIModel
-from dotenv import load_dotenv
-
-load_dotenv()
 
 from agents.db_schema import DB_SCHEMA_CONTEXT
+from agents.model_provider import get_model
 
 CONTEXT_HANDLING_SYSTEM_PROMPT = """
 You are the CONTEXT HANDLING AGENT for workflow orchestration.
@@ -31,15 +26,45 @@ DATABASE SCHEMA (use for intelligent parameter resolution)
 RESOLUTION RULES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Priority order for resolving each parameter:
-  1. EXACT KEY MATCH — use the value directly if the same key exists in context.
-  2. SEMANTIC MATCH — infer from a different-named key with the same meaning.
-     Examples: "employee_email" ↔ "email", "buddy_name" ↔ "buddy", "meeting_link" ↔ "link"
-  3. NESTED EXTRACTION — dig into JSON arrays/dicts from SQL results or step outputs.
-     - For SQL row lists: match by employee name, pick the correct field.
-     - For single-row results: directly use the field value.
-  4. COMPOSITE CONSTRUCTION — combine multiple context values if the tool clearly needs it.
-     Example: recipient_emails = join all "email" fields from a SQL rows list.
-  5. KEEP AS "" — if genuinely unresolvable from context, do NOT invent data.
+  1. EXACT KEY MATCH — the same key exists in context → use it directly.
+  2. SEMANTIC MATCH — different key, same meaning (e.g. "employee_email" ↔ "email", "buddy_name" ↔ "buddy").
+  3. NESTED EXTRACTION — dig into dicts/lists from SQL results or step outputs.
+  4. COMPOSITE CONSTRUCTION — combine multiple values if the tool clearly needs all of them.
+  5. KEEP AS "" — if genuinely unresolvable, do NOT invent data.
+
+RECENCY RULE (critical):
+  When the same key appears in multiple prior steps, prefer the MOST RECENT step's value.
+  Do not average or mix values across steps. Pick the latest one.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HANDLING SQL LIST RESULTS — CRITICAL SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SQL SELECT results appear in workflow context in two shapes:
+
+  SHAPE A — plain list of scalars (single-column SELECT):
+    e.g. ["alice@co.com", "bob@co.com", "carol@co.com"]
+
+    → If the current parameter needs an email list (param name: "to", "recipient_emails", "emails"):
+        JOIN ALL items with ", "
+        CORRECT: "alice@co.com, bob@co.com, carol@co.com"
+        WRONG:   "alice@co.com, alice@co.com, alice@co.com"
+
+    → If the current parameter needs a single email:
+        Pick the item that best matches the person name in the step context. If none matches, use the first item.
+
+  SHAPE B — list of row dicts (multi-column SELECT):
+    e.g. [{"name": "Alice", "email": "alice@co.com"}, {"name": "Bob", "email": "bob@co.com"}]
+
+    → To get a comma-separated email list: extract the "email" field from EVERY row and join with ", "
+        CORRECT: "alice@co.com, bob@co.com"
+        WRONG:   pick only the first or last row's email and repeat it
+
+    → To get a single person's email: match the person name against the "name" field, pick that row's "email".
+
+  DEDUPLICATION:
+    If the joined list contains duplicates (same email appears more than once), deduplicate before joining.
+    CORRECT: "alice@co.com, bob@co.com, carol@co.com"
+    WRONG:   "alice@co.com, alice@co.com, alice@co.com, alice@co.com"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 execute_sql QUERY RESOLUTION
@@ -58,8 +83,8 @@ Example resolutions:
   Step: "Find best buddy for Bob in Engineering"
   → query: "SELECT name, email FROM employees WHERE LOWER(department) = LOWER('Engineering') AND status = 'ACTIVE' AND LOWER(name) != LOWER('Bob') ORDER BY created_at ASC LIMIT 1"
 
-  Step: "Get all emails in IT department"
-  → query: "SELECT name, email FROM employees WHERE LOWER(department) = LOWER('IT') AND status = 'ACTIVE'"
+  Step: "Get all emails for participants sarves, arun, midhun"
+  → query: "SELECT email FROM employees WHERE LOWER(name) IN ('sarves', 'arun', 'midhun')"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT FORMAT
@@ -74,29 +99,21 @@ Return ONLY valid JSON with this exact schema:
 
 Critical rules:
 - resolved_parameters MUST include EVERY key that exists in "Current Parameters" (even if unchanged).
+- ⚠️ STRICT PARAMETER SCHEMA: NEVER add extra keys to `resolved_parameters` that were not present in "Current Parameters". You may only modify the *values* of existing keys.
 - Never fabricate business data (names, emails, IDs, URLs). If unresolved, keep it as "".
-- For list payloads (SQL rows), extract the correct value by entity-name matching.
-- If multiple values are needed in one param (e.g. comma-separated emails), join them.
+- For SHAPE A SQL list results: join ALL items (deduplicated) — do not repeat a single item.
+- For SHAPE B SQL row-dict results: extract the correct field from each row.
+- Prefer the most recent step's value when the same key appears in multiple steps.
 - Keep context_updates compact — only add keys that downstream steps will actually need.
 - Output JSON only (no markdown, no commentary).
 """
-
-
-def _get_model():
-    return OpenAIModel(
-        client_args={
-            "api_key": os.getenv("OPENAI_API_KEY"),
-            "base_url": os.getenv("OPENAI_BASE_URL"),
-        },
-        model_id=os.getenv("OPENAI_MODEL_ID", "gpt-4.1-nano"),
-    )
 
 
 def get_context_handling_agent() -> Agent:
     """Returns a configured Context Handling Agent."""
     return Agent(
         system_prompt=CONTEXT_HANDLING_SYSTEM_PROMPT,
-        model=_get_model(),
+        model=get_model(),
         tools=[],
         callback_handler=None,
     )

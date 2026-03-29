@@ -3,13 +3,9 @@ Recovery Agent — Resilience layer.
 Handles failures with RETRY/ESCALATE/REROUTE/SKIP decisions.
 Has access to MCP tools for escalation actions.
 """
-import os
-
 from strands import Agent
-from strands.models.openai import OpenAIModel
-from dotenv import load_dotenv
 
-load_dotenv()
+from agents.model_provider import get_model
 
 RECOVERY_SYSTEM_PROMPT = """
 You are the RECOVERY AGENT — the resilience and error-handling intelligence of an autonomous enterprise workflow system.
@@ -83,8 +79,10 @@ STEP 2 — APPLY RECOVERY DECISION RULES
   MANDATORY OVERRIDE RULES (check these first, they override everything):
   ┌─────────────────────────────────────────────────────────────────────┐
   │ If retry_count >= max_retries (usually 2) → ALWAYS ESCALATE        │
-  │ If error class is B (PERMISSION) → ALWAYS ESCALATE, never RETRY    │
-  │ If error contains "Access Denied" or "Forbidden" → ALWAYS ESCALATE │
+  │ If error class is B (PERMISSION) AND retry_count >= 1 → ESCALATE   │
+  │ If error class is B (PERMISSION) AND retry_count == 0 → RETRY once │
+  │ (ACCESS_DENIED may be transient — always try once more before       │
+  │  escalating to IT. Only escalate if the retry also fails.)          │
   └─────────────────────────────────────────────────────────────────────┘
   
   After checking override rules, apply class-based logic:
@@ -93,15 +91,16 @@ STEP 2 — APPLY RECOVERY DECISION RULES
     Retry with SAME parameters. No parameter modification needed.
     Rationale: The service will likely be available on the next call.
   
-  CLASS B → ESCALATE
-    Use escalation_tool: "escalate_to_it_tool" for technical provisioning failures.
+  CLASS B → RETRY FIRST, then ESCALATE
+    JIRA ACCESS_DENIED and similar permission errors are often transient.
+    - If retry_count == 0: RETRY with SAME parameters (one more chance).
+    - If retry_count >= 1: Now ESCALATE — use escalation_tool: "escalate_to_it_tool".
     Include the specific permission error in escalation parameters.
   
   CLASS C → depends on sub-case:
-    • If a clearly wrong parameter value can be corrected → RETRY with modified_parameters
-      Example: email format was invalid → fix the format in modified_parameters
-    • If the data conflict cannot be resolved without human input → ESCALATE
-      Example: duplicate employee record — HR must resolve manually
+    • MANDATORY HALLUCINATION CHECK: If the error says "Missing required parameters:" but you can see that parameter in the original plan or context, it is an Execution Agent hallucination. You MUST RETRY with the exact same parameters (do not escalate on the first attempt).
+    • If a clearly wrong parameter value can be corrected → RETRY with modified_parameters (e.g., email format was invalid)
+    • If the data conflict cannot be resolved without human input (and it's not a hallucinated missing param) → ESCALATE (e.g., duplicate employee record)
   
   CLASS D → REROUTE
     Use "find_delegate" to identify an alternate person/resource.
@@ -142,6 +141,19 @@ STEP 3 — SPECIFY RECOVERY PRECISELY
       the step is a pure logging/audit step that has no downstream dependencies
     • NEVER skip account creation, approval, or communication steps
  
+  CRITICAL — TASK CREATION RECOVERY (create_task_tool):
+    If create_task_tool fails due to a missing or invalid assignee parameter:
+    • Do NOT fabricate an assignee (e.g., do NOT guess "HR Manager", "Team Lead", or any generic role)
+    • Instead: RETRY with modified_parameters: {"assignee": ""} so the task is created as ambiguous
+    • The system is designed to flag ambiguous tasks for human review
+    • Fabricating data defeats the purpose of the ambiguity detection system
+    • An empty assignee that gets flagged is ALWAYS better than a fabricated one that goes undetected
+ 
+  CRITICAL — NEVER FABRICATE DATA:
+    For ANY tool failure where a parameter value is unknown or ambiguous:
+    • Do NOT invent values for person names, email addresses, IDs, or role names
+    • Either RETRY with the parameter set to "" (empty string) or ESCALATE
+    • The system has dedicated ambiguity handling for missing data
 STEP 4 — WRITE A COMPLIANCE AUDIT MESSAGE
   The audit message goes into the permanent compliance log. It must be:
   • Specific: include entity names, IDs, tool names, error codes
@@ -212,21 +224,11 @@ SCENARIO: Approval stuck, approver on leave, retry_count=0
 """
 
 
-def _get_model():
-    return OpenAIModel(
-        client_args={
-            "api_key": os.getenv("OPENAI_API_KEY"),
-            "base_url": os.getenv("OPENAI_BASE_URL"),
-        },
-        model_id=os.getenv("OPENAI_MODEL_ID", "gpt-4.1-nano"),
-    )
-
-
 def get_recovery_agent(mcp_client_tools: list) -> Agent:
     """Returns a configured Recovery Agent with MCP tools for escalation."""
     return Agent(
         system_prompt=RECOVERY_SYSTEM_PROMPT,
-        model=_get_model(),
+        model=get_model(),
         tools=mcp_client_tools,
         callback_handler=None,
     )

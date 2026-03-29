@@ -268,6 +268,12 @@ def build_step_graph(
                 "output": exec_output[:500], "error": "Could not parse execution result"
             }
 
+        # Hard guardrail: the orchestrator, not the agent, is the source of truth for
+        # which tool was called. This prevents UI/audit confusion if the execution agent
+        # misreports tool_called.
+        if isinstance(exec_result, dict):
+            exec_result["tool_called"] = state["tool_name"]
+
         # Check tool-level success/failure
         output_data = exec_result.get("output", "")
         if isinstance(output_data, str):
@@ -276,7 +282,23 @@ def build_step_graph(
             except Exception:
                 pass
         if isinstance(output_data, dict):
-            if output_data.get("success") is True:
+            # If the tool output self-identifies, ensure it matches the planned tool.
+            # This prevents "tool drift" where an agent calls a different tool than instructed.
+            # If the tool output self-identifies, ensure it matches the planned tool.
+            # This prevents "tool drift" where an agent calls a different tool than instructed.
+            out_tool = output_data.get("tool")
+            
+            if isinstance(out_tool, str) and out_tool and out_tool != state["tool_name"]:
+                exec_result["status"] = "FAILURE"
+                exec_result["error"] = f"Tool governance violation: planned '{state['tool_name']}', but output claims '{out_tool}'"
+                exec_result["output"] = output_data
+            # Schema validation for high-risk tools to prevent silent drift.
+            if state["tool_name"] == "get_workflow_context_tool" and exec_result.get("status") != "FAILURE":
+                if "success" not in output_data or "data" not in output_data:
+                    exec_result["status"] = "FAILURE"
+                    exec_result["error"] = "Invalid get_workflow_context_tool output shape (expected {success,data,...}). Possible tool drift."
+                    exec_result["output"] = output_data
+            elif output_data.get("success") is True:
                 exec_result["status"] = "SUCCESS"
             elif output_data.get("success") is False:
                 exec_result["status"] = "FAILURE"
@@ -482,6 +504,8 @@ def build_step_graph(
                         esc_prompt, emit_fn, step_id=str(state["step_id"])
                     )
                     esc_result = _parse_agent_json(esc_output)
+                    if isinstance(esc_result, dict) and esc_tool:
+                        esc_result["tool_called"] = esc_tool
                     await emit_fn("tool_result", "recovery",
                                   esc_result or {"output": esc_output[:300]},
                                   step_id=str(state["step_id"]))

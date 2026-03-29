@@ -7,7 +7,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const SCENARIOS = [
   {
-
+    icon: "👋",
     title: "Employee Onboarding",
     desc: "Full autonomous onboarding: HR account, email, JIRA, buddy assignment, orientation, welcome email.",
     request: "Onboard Priya Sharma as a new Software Engineer in the Engineering department. Her email is priya.sharma@company.com.",
@@ -18,14 +18,14 @@ const SCENARIOS = [
     trigger: "employee_onboarding",
   },
   {
-
+    icon: "💬",
     title: "Meeting Action Items",
     desc: "Extract action items from transcript, create tasks for each, and send a summary email to stakeholders.",
     request: "Process this meeting transcript: Sprint planning discussed UI refresh (Alice), API migration (Bob), deadline Friday. Carol to update staging. David to review security. Send summary to team.",
     trigger: "meeting_action_items",
   },
   {
-
+    icon: "⏱️",
     title: "SLA Breach Response",
     desc: "Detect SLA breach, find delegate, reroute approval, and log audit trail for compliance.",
     request: "SLA breach detected for ticket PROD-4521 in Engineering department. The original assignee is on leave. Reroute and escalate appropriately.",
@@ -42,17 +42,7 @@ export default function LandingPage() {
   const handleRun = async () => {
     setLoading(true);
     try {
-      const scenario = selected !== null ? SCENARIOS[selected] : null;
-      const body = scenario
-        ? {
-            request: scenario.request,
-            trigger: scenario.trigger,
-            name: scenario.name || null,
-            email: scenario.email || null,
-            role: scenario.role || null,
-            department: scenario.department || null,
-          }
-        : { request: customRequest, trigger: "manual" };
+      const body = { request: customRequest, trigger: "manual" };
 
       const res = await fetch(`${API}/api/workflows/start`, {
         method: "POST",
@@ -86,8 +76,12 @@ export default function LandingPage() {
           <div
             key={i}
             className={`scenario-card${selected === i ? " active" : ""}`}
-            onClick={() => { setSelected(i); setCustomRequest(""); }}
-            style={selected === i ? { borderColor: "var(--accent)", boxShadow: "0 0 20px rgba(99,102,241,0.15)" } : {}}
+            onClick={() => {
+              if (s.trigger === "employee_onboarding") router.push("/onboarding");
+              else if (s.trigger === "meeting_action_items") router.push("/tasks");
+              else if (s.trigger === "sla_breach") router.push("/sla");
+            }}
+            style={{ cursor: "pointer" }}
           >
             <div className="scenario-icon">{s.icon}</div>
             <div className="scenario-title">{s.title}</div>
@@ -97,17 +91,18 @@ export default function LandingPage() {
       </div>
 
       <div className="custom-input-area">
-        <input
+        <textarea
           className="input-field"
-          placeholder="Or describe a custom workflow..."
+          style={{ minHeight: "120px", resize: "vertical", fontSize: "16px", padding: "16px" }}
+          placeholder="Or describe a custom workflow here..."
           value={customRequest}
-          onChange={(e) => { setCustomRequest(e.target.value); setSelected(null); }}
+          onChange={(e) => setCustomRequest(e.target.value)}
         />
       </div>
 
       <button
         className="btn-primary"
-        disabled={loading || (selected === null && !customRequest.trim())}
+        disabled={loading || !customRequest.trim()}
         onClick={handleRun}
         style={{ minWidth: 200 }}
       >

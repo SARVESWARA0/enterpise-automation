@@ -136,20 +136,23 @@ export default function WorkflowDashboard() {
         if (!wfRes.ok) throw new Error("Workflow fetch failed");
         const wf = await wfRes.json();
 
+        // Always try to hydrate from saved events first
+        const eventsRes = await fetch(`${API}/api/workflows/${workflowId}/events`);
+        const eventsPayload = eventsRes.ok ? await eventsRes.json() : { events: [] };
+        const historicalEvents: StreamEvent[] = Array.isArray(eventsPayload?.events)
+          ? eventsPayload.events
+          : [];
+
+        let hydrated = INITIAL;
+        for (const event of historicalEvents) {
+          if (!event?.event_type || event.event_type === "heartbeat") continue;
+          hydrated = reducer(hydrated, event);
+        }
+
         const terminalStatuses = ["COMPLETED", "FAILED", "ESCALATED"];
+
         if (terminalStatuses.includes(wf.status)) {
-          const eventsRes = await fetch(`${API}/api/workflows/${workflowId}/events`);
-          const eventsPayload = eventsRes.ok ? await eventsRes.json() : { events: [] };
-          const historicalEvents: StreamEvent[] = Array.isArray(eventsPayload?.events)
-            ? eventsPayload.events
-            : [];
-
-          let hydrated = INITIAL;
-          for (const event of historicalEvents) {
-            if (!event?.event_type || event.event_type === "heartbeat") continue;
-            hydrated = reducer(hydrated, event);
-          }
-
+          // Workflow is finished — just show the hydrated state
           if (!terminalStatuses.includes(hydrated.status)) {
             hydrated = {
               ...hydrated,
@@ -160,12 +163,18 @@ export default function WorkflowDashboard() {
               },
             };
           }
-
-          if (isActive) {
-            dispatch({ type: "hydrate", payload: hydrated });
-          }
+          if (isActive) dispatch({ type: "hydrate", payload: hydrated });
           return;
         }
+
+        // Workflow is still running (or pending/scheduled) — hydrate existing events,
+        // then connect SSE to receive new events on top
+        if (hydrated.events.length > 0) {
+          hydrated.status = "RUNNING";
+        } else {
+          hydrated.status = wf.status === "SCHEDULED" ? "SCHEDULED" : "CONNECTING";
+        }
+        if (isActive) dispatch({ type: "hydrate", payload: hydrated });
 
         const es = new EventSource(`${API}/api/workflows/${workflowId}/stream`);
         eventSourceRef.current = es;

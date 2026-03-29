@@ -20,7 +20,7 @@ from fastmcp import FastMCP
 
 # ── Ensure db package is importable ──
 sys.path.insert(0, os.path.dirname(__file__))
-from db.connection import init_db
+from db.connection import init_db, get_conn
 from db import queries as db
 
 mcp = FastMCP("Enterprise Autopilot Tools")
@@ -122,16 +122,13 @@ def execute_sql(query: str, workflow_id: str = "") -> str:
         workflow_id: Workflow UUID for audit tracking (optional but recommended).
     """
     try:
-        conn = psycopg2.connect(DB_URL)
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute(query)
-        rows = []
-        if cursor.description:
-            rows = [dict(r) for r in cursor.fetchall()]
-        row_count = cursor.rowcount if cursor.rowcount is not None else len(rows)
-        conn.commit()
-        cursor.close()
-        conn.close()
+        with get_conn() as conn:
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute(query)
+            rows = []
+            if cursor.description:
+                rows = [dict(r) for r in cursor.fetchall()]
+            row_count = cursor.rowcount if cursor.rowcount is not None else len(rows)
         result = {
             "success": True,
             "rowCount": row_count,
@@ -471,7 +468,7 @@ def create_jira_account_tool(name: str, email: str, workflow_id: str = "") -> st
     """
     time.sleep(0.4)
     # Simulate failure randomly (60–70% failure rate)
-    if random.random() < 0.65:
+    if random.random() < 0.90:
         result = {
             "success": False,
             "message": "JIRA access denied",
@@ -504,6 +501,11 @@ def create_jira_account_tool(name: str, email: str, workflow_id: str = "") -> st
 @mcp.tool()
 def create_hr_account_tool(name: str, email: str, role: str = "", department: str = "", workflow_id: str = "") -> str:
     """Create or update an employee HR record — the foundational onboarding step.
+
+    WORKFLOW SCOPE:
+      - ✅ EMPLOYEE ONBOARDING / TRANSFER / OFFBOARDING preparation
+      - ❌ MEETING-TO-ACTION (do not create HR records for meeting participants)
+      - ❌ SLA monitoring (unless you are explicitly onboarding a new approver)
 
     This tool:
       1. Looks up existing employee by email, then by name (case-insensitive) to avoid duplicates.
@@ -567,7 +569,7 @@ def create_hr_account_tool(name: str, email: str, role: str = "", department: st
 
     result = {
         "success": True,
-        "message": f"HR account created for {name} ({generated_id}) — status set to ONBOARDING",
+        "message": f"HR account created for {name} ({generated_id}) — status set to ACTIVE",
         "tool": "create_hr_account_tool",
         "retryable": False,
         "data": {
@@ -582,7 +584,7 @@ def create_hr_account_tool(name: str, email: str, role: str = "", department: st
     if workflow_id:
         db.log_audit(
             workflow_id=workflow_id, decision="tool_executed",
-            reason=f"Created HR account for {name} ({generated_id}), status → ONBOARDING",
+            reason=f"Created HR account for {name} ({generated_id}), status → ACTIVE",
             action_taken="create_hr_account_tool",
             agent_name="ExecutionAgent", tool_name="create_hr_account_tool", status="completed"
         )
@@ -1083,7 +1085,7 @@ def send_orientation_email_tool(
 # TOOL: create_task_tool
 # ────────────────────────────────────────
 @mcp.tool()
-def create_task_tool(title: str, description: str, assignee: str, priority: str = "medium", workflow_id: str = "") -> str:
+def create_task_tool(title: str, description: str, assignee: str = "", priority: str = "medium", reason: str = "", workflow_id: str = "") -> str:
     """Create and assign an action-item task to a person.
 
     USE CASES:
@@ -1095,34 +1097,79 @@ def create_task_tool(title: str, description: str, assignee: str, priority: str 
     NOTE: This is distinct from create_jira_account_tool (which creates a JIRA USER ACCOUNT).
           create_task_tool creates a TASK/TICKET assigned to a person.
 
+    IMPORTANT: If the owner/assignee is unclear or ambiguous, pass assignee="" (empty string).
+    The task will be created with status="ambiguous" and flagged for human review.
+    NEVER fabricate or guess an assignee — an empty assignee is always better than a wrong one.
+
     Returns:
       { "success": true, "data": { "task_id": "TASK-XXXX", "title": "...", "assignee": "...", "priority": "..." } }
 
     Args:
         title: Short task title e.g. "UI Refresh implementation".
         description: Detailed description of what needs to be done and why.
-        assignee: Name or email of the person responsible for completing this task.
+        assignee: Email of the person responsible (from identity table). Pass "" if unknown/ambiguous.
         priority: "low" | "medium" | "high" | "critical"
+        reason: WHY this person is assigned and HOW this task was identified. Be specific:
+                - Quote the transcript line that created the task (e.g. "sarveswaran said 'we should track deployment metrics'")
+                - Explain the assignment basis (e.g. "Assigned to sarveswaran because he explicitly volunteered: 'I can take responsibility for testing'")
+                - For ambiguous tasks: state what role/context suggests ownership (e.g. "No explicit owner; HR suggested by context")
+                NEVER use generic strings like 'Created by tool during workflow execution'.
         workflow_id: Workflow UUID for audit tracking.
     """
     time.sleep(0.3)
-    task_id = f"TASK-{random.randint(1000, 9999)}"
+    effective_reason = reason.strip() if reason.strip() else (
+        f"Assigned to {assignee} based on workflow context." if assignee
+        else "No explicit owner identified; task flagged for human review."
+    )
+    try:
+        task_row = db.create_task(
+            title=title,
+            description=description,
+            owner=assignee or None,
+            status="pending" if assignee else "ambiguous",
+            priority=priority,
+            source_meeting_id=None,
+            raw_text=description,
+            parsed_intent={"title": title, "description": description},
+            reason_for_creation=effective_reason,
+            confidence_score=0.95 if assignee else 0.4,
+        )
+        try:
+            db.log_enterprise_audit(
+                entity_type="task",
+                entity_id=task_row["task_id"],
+                event_type="TASK_CREATED_BY_TOOL",
+                message=effective_reason,
+                actor="execution_agent",
+                metadata={"workflow_id": workflow_id, "priority": priority, "ambiguous": not bool(assignee)},
+            )
+        except Exception:
+            pass  # audit failure must never block task creation
 
-    result = {
-        "success": True,
-        "message": f"Task '{title}' created and assigned to {assignee}",
-        "data": {
-            "task_id": task_id,
-            "title": title,
-            "assignee": assignee,
-            "priority": priority
-        },
-        "retryable": False
-    }
+        result = {
+            "success": True,
+            "message": f"Task '{title}' created and assigned to {assignee or 'unassigned (ambiguous)'}",
+            "tool": "create_task_tool",
+            "data": {
+                "task_id": task_row["task_id"],
+                "title": task_row["title"],
+                "assignee": task_row["owner"],
+                "priority": task_row["priority"],
+                "status": task_row["status"],
+            },
+            "retryable": False,
+        }
+    except Exception as e:
+        result = {
+            "success": False,
+            "error": f"Failed to create task: {str(e)}",
+            "tool": "create_task_tool",
+            "retryable": False,
+        }
     if workflow_id:
         db.log_audit(
             workflow_id=workflow_id, decision="tool_executed",
-            reason=f"Created task: {title} → {assignee}", action_taken="create_task_tool",
+            reason=f"Created task: {title} → {assignee or '(ambiguous)'}", action_taken="create_task_tool",
             agent_name="ExecutionAgent", tool_name="create_task_tool", status="completed"
         )
     return json.dumps(result)

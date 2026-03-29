@@ -222,7 +222,7 @@ def append_stream_event(workflow_id: str, event: dict):
         # Write to a temporary file then rename for atomic replacement
         temp_path = f"{path}.tmp"
         with open(temp_path, "w", encoding="utf-8") as f:
-            json.dump(events, f, indent=2)
+            json.dump(events, f)
         os.replace(temp_path, path)
 
 

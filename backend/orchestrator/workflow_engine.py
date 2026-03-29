@@ -22,6 +22,104 @@ from db import queries as db
 from orchestrator.graph import build_step_graph
 from state_manager import append_stream_event, get_stream_events
 
+# ── Workflow governance ──────────────────────────────────────────────────────
+
+# Steps whose dependency on other steps is "soft" — they should proceed even
+# if a dependency was ESCALATED or SKIPPED (e.g. JIRA fails, but onboarding
+# email should still be sent).
+# NOTE: Canonical _SOFT_DEP_TOOLS definition is below (after _repair_onboarding_sql_params)
+
+def _infer_workflow_type(user_request: str) -> str:
+    """Best-effort deterministic classifier for UI/audit labelling (no LLM)."""
+    txt = (user_request or "").lower()
+    if "meeting title" in txt and "participants" in txt and "transcript" in txt:
+        return "MEETING_TO_ACTION"
+    if "onboarding" in txt or "new hire" in txt or "welcome" in txt:
+        return "EMPLOYEE_ONBOARDING"
+    if "sla" in txt or "approval" in txt or "deadline" in txt or "breach" in txt:
+        return "SLA_BREACH_PREVENTION"
+    return "GENERIC"
+
+
+# ── Lightweight post-plan sanity filter ──────────────────────────────────────
+# Instead of static tool allowlists (which kill autonomy), we only block
+# structurally nonsensical SQL patterns that indicate planner hallucination.
+
+def _is_nonsensical_sql(query: str) -> bool:
+    """Block wide SELECT * with no WHERE — a sign the planner is using SQL as a fake task detector."""
+    q = (query or "").strip().lower()
+    if not q.startswith("select"):
+        return False
+    if "select *" in q and "from employees" in q and "where" not in q and "limit" not in q:
+        return True
+    if q == "select * from employees":
+        return True
+    return False
+
+
+def _post_plan_sanity_filter(raw_steps: list, workflow_type: str, emitter_sync_log: list) -> list:
+    """
+    Lightweight sanity filter — removes only structurally invalid steps.
+    Does NOT restrict tool access (the planner is trusted to pick correct tools).
+    Returns the filtered step list.
+    """
+    clean = []
+    for step in raw_steps:
+        tool = step.get("tool_name", "")
+        params = step.get("parameters", {}) or {}
+
+        # Block nonsensical SQL (wide SELECT * used as fake task detector)
+        if tool == "execute_sql" and _is_nonsensical_sql(params.get("query", "")):
+            emitter_sync_log.append(
+                f"⚠️ Removed nonsensical SQL step '{step.get('name')}' — wide SELECT * without WHERE is not a valid operation"
+            )
+            continue
+
+        clean.append(step)
+    return clean
+
+
+def _repair_onboarding_sql_params(step_tool: str, step_name: str, params: dict, workflow_context: dict) -> dict:
+    """
+    Deterministic guardrail for common onboarding SQL placeholder issues.
+    - Fixes: UPDATE employees SET buddy = '' ... when a buddy candidate was found in prior step output.
+    """
+    if step_tool != "execute_sql" or not isinstance(params, dict):
+        return params
+    query = params.get("query")
+    if not isinstance(query, str) or not query:
+        return params
+
+    q_lower = query.lower()
+    if "update employees" in q_lower and "set buddy = ''" in q_lower:
+        # Try the most recent execute_sql output first, then global last output.
+        candidate = workflow_context.get("_last_tool_output_execute_sql") or workflow_context.get("_last_output")
+        buddy_name = None
+        if isinstance(candidate, dict):
+            name = candidate.get("name")
+            if isinstance(name, str) and name.strip():
+                buddy_name = name.strip()
+        elif isinstance(candidate, list) and candidate:
+            first = candidate[0]
+            if isinstance(first, dict) and isinstance(first.get("name"), str) and first.get("name").strip():
+                buddy_name = first.get("name").strip()
+
+        if buddy_name:
+            params = dict(params)
+            safe_name = buddy_name.replace("'", "''")
+            params["query"] = query.replace("SET buddy = ''", f"SET buddy = '{safe_name}'")
+    return params
+
+
+# ── Dependency classification ────────────────────────────────────────────────
+# Tools whose failure should NOT block downstream steps (soft dependencies).
+# Everything else defaults to hard — a failure halts dependent steps.
+
+_SOFT_DEP_TOOLS = {"log_audit_entry", "send_summary_email_tool", "send_email",
+                   "get_workflow_context_tool", "send_onboarding_email_tool", 
+                   "send_orientation_email_tool", "schedule_meeting_tool"}
+
+
 # ── SSE Event Queues (in-memory, per workflow) ──
 _event_queues: dict[str, asyncio.Queue] = {}
 
@@ -104,14 +202,28 @@ async def run_workflow(workflow_id: str, user_request: str,
     
     Flow:
       1. Interpreter generates JSON plan → save as steps in DB
-      2. Build Strands Graph per step (exec → verify → recovery loop)
-      3. Run each step through its graph with streaming
-      4. Emit workflow_complete
+      2. (Optional) Lightweight sanity filter removes structurally invalid steps
+      3. Build Strands Graph per step (exec → verify → recovery loop)
+      4. Run each step through its graph with streaming
+      5. Emit workflow_complete with honest summary
     """
     emitter = lambda et, ag, data, **kw: emit(workflow_id, et, ag, data, **kw)
 
     # ── DB: workflow started ──
     db.update_workflow_status(workflow_id, "PLANNING")
+
+    wf_row = db.get_workflow(workflow_id) or {}
+    inferred_type = _infer_workflow_type(user_request)
+    known_types = {"MEETING_TO_ACTION", "EMPLOYEE_ONBOARDING", "SLA_BREACH_PREVENTION", "GENERIC"}
+    stored_type = (wf_row.get("type") or "").strip()
+    workflow_type = stored_type if stored_type in known_types else inferred_type
+
+    # Upgrade workflow.type for UI clarity when the stored type is unknown/generic.
+    try:
+        if stored_type != workflow_type:
+            db.update_workflow_type(workflow_id, workflow_type)
+    except Exception:
+        pass
 
     # ── PHASE 1: INTERPRET ──────────────────────────────────────────────────
     await emitter("agent_message", "interpreter", {
@@ -122,7 +234,7 @@ async def run_workflow(workflow_id: str, user_request: str,
     interpreter = await get_interpreter_agent()
 
     try:
-        raw_steps = generate_plan(interpreter, user_request)
+        raw_steps = await asyncio.to_thread(generate_plan, interpreter, user_request)
     except Exception as e:
         traceback.print_exc()
         db.update_workflow_status(workflow_id, "FAILED")
@@ -146,6 +258,14 @@ async def run_workflow(workflow_id: str, user_request: str,
         for key, val in params.items():
             if val == "__WORKFLOW_ID__":
                 params[key] = workflow_id
+
+    # ── Lightweight sanity filter (replaces static tool allowlists) ──
+    # Trust the planner to pick tools autonomously — only remove structurally
+    # nonsensical steps (e.g., wide SELECT * used as fake task detector).
+    sanity_log: list[str] = []
+    raw_steps = _post_plan_sanity_filter(raw_steps, workflow_type, sanity_log)
+    for msg in sanity_log:
+        await emitter("agent_message", "orchestrator", {"message": msg})
 
     # Save plan to workflow record
     db.update_workflow_status(workflow_id, "RUNNING", plan=raw_steps)
@@ -204,10 +324,9 @@ async def run_workflow(workflow_id: str, user_request: str,
                     dep_type = dep.get("type", "hard")
                 else:
                     dep_id = dep
-                    # Planner currently emits `depends_on` as simple step IDs (no {type: ...} metadata).
-                    # Defaulting to "soft" prevents cascades where a single ESCALATED/SKIPPED prerequisite
-                    # blocks downstream audit/log steps and optional continuations.
-                    dep_type = "soft"
+                    # Smart default: audit/summary/notification steps use soft deps
+                    # so failures don't cascade to them. Critical steps use hard deps.
+                    dep_type = "soft" if step.tool_name in _SOFT_DEP_TOOLS else "hard"
 
                 dep_result = step_results.get(dep_id, {})
                 status = dep_result.get("status")
@@ -268,7 +387,12 @@ async def run_workflow(workflow_id: str, user_request: str,
                 "step_id": plan_step_id,
                 "step_name": step.name,
                 "tool_name": step.tool_name,
-                "parameters": dict(step.parameters),
+                "parameters": _repair_onboarding_sql_params(
+                    step.tool_name,
+                    step.name,
+                    dict(step.parameters),
+                    output_accumulator,
+                ),
                 "step_db_id": step_db_id,
                 "workflow_context": dict(output_accumulator),  # shared state
             }
@@ -315,7 +439,7 @@ async def run_workflow(workflow_id: str, user_request: str,
                 "output": exec_output
             }
 
-            # ── Extract data into output_accumulator (Fix 4) ──
+            # ── Extract data into output_accumulator ──
             if final_status == "COMPLETED" and isinstance(exec_output, dict):
                 raw_out = exec_output.get("output", exec_output)
                 if isinstance(raw_out, str):
@@ -328,6 +452,29 @@ async def run_workflow(workflow_id: str, user_request: str,
                     data = raw_out.get("data", raw_out)
                     if isinstance(data, (dict, list)):
                         output_accumulator[plan_step_id] = data
+                        # Add stable semantic aliases to improve context resolution robustness.
+                        output_accumulator["_last_step_id"] = plan_step_id
+                        output_accumulator["_last_tool_name"] = step.tool_name
+                        output_accumulator["_last_output"] = data
+                        output_accumulator[f"_last_tool_output_{step.tool_name}"] = data
+
+                        # Special-case: email fan-out from SQL results
+                        if step.tool_name == "execute_sql" and isinstance(data, list):
+                            emails: list[str] = []
+                            for r in data:
+                                if isinstance(r, dict) and "email" in r and isinstance(r["email"], str):
+                                    emails.append(r["email"])
+                                elif isinstance(r, str) and "@" in r:
+                                    emails.append(r)
+                            if emails:
+                                deduped = []
+                                seen = set()
+                                for e in emails:
+                                    if e not in seen:
+                                        seen.add(e)
+                                        deduped.append(e)
+                                output_accumulator["_last_emails_list"] = deduped
+                                output_accumulator["_last_emails_csv"] = ", ".join(deduped)
 
             # Log duration
             db.log_agent_action(
@@ -354,11 +501,29 @@ async def run_workflow(workflow_id: str, user_request: str,
     except Exception:
         pass
 
-    # ── PHASE 3: COMPLETE ──────────────────────────────────────────────────
+    # ── PHASE 3: COMPLETE (honest summary) ─────────────────────────────────
     completed_count = sum(1 for r in step_results.values() if r.get("status") == "COMPLETED")
     escalated_count = sum(1 for r in step_results.values() if r.get("status") == "ESCALATED")
     skipped_count = sum(1 for r in step_results.values() if r.get("status") == "SKIPPED")
     failed_count = len(raw_steps) - completed_count - escalated_count - skipped_count
+
+    # Count tasks that were created as ambiguous (no clear owner)
+    ambiguous_count = 0
+    for r in step_results.values():
+        if r.get("status") != "COMPLETED":
+            continue
+        out = r.get("output")
+        if isinstance(out, dict):
+            inner = out.get("output")
+            if isinstance(inner, str):
+                try:
+                    inner = json.loads(inner)
+                except Exception:
+                    pass
+            if isinstance(inner, dict):
+                data = inner.get("data", {})
+                if isinstance(data, dict) and data.get("status") == "ambiguous":
+                    ambiguous_count += 1
 
     final_wf_status = "COMPLETED" if failed_count == 0 and escalated_count == 0 else (
         "ESCALATED" if escalated_count > 0 else "FAILED"
@@ -366,11 +531,16 @@ async def run_workflow(workflow_id: str, user_request: str,
 
     db.update_workflow_status(workflow_id, final_wf_status)
 
-    # Update employee status if this was an onboarding workflow
-    wf = db.get_workflow(workflow_id)
-    if wf and wf.get("entity_id"):
-        emp_status = "ACTIVE" if final_wf_status == "COMPLETED" else "ONBOARDING"
-        db.update_employee_status("", emp_status, employee_db_id=wf["entity_id"])
+    # Employee status is managed by the tools now (e.g. create_hr_account_tool sets it to ACTIVE).
+
+    # Build honest summary reflecting actual state
+    summary_parts = [f"Workflow finished: {completed_count}/{len(raw_steps)} steps completed autonomously."]
+    if escalated_count:
+        summary_parts.append(f"{escalated_count} escalated to humans.")
+    if failed_count:
+        summary_parts.append(f"{failed_count} failed.")
+    if ambiguous_count:
+        summary_parts.append(f"{ambiguous_count} task(s) flagged as ambiguous (need human review).")
 
     await emitter("workflow_complete", "orchestrator", {
         "status": final_wf_status,
@@ -378,8 +548,7 @@ async def run_workflow(workflow_id: str, user_request: str,
         "completed": completed_count,
         "escalated": escalated_count,
         "failed": failed_count,
-        "summary": (
-            f"Workflow finished: {completed_count}/{len(raw_steps)} steps completed autonomously. "
-            f"{escalated_count} escalated to humans."
-        )
+        "skipped": skipped_count,
+        "ambiguous_tasks": ambiguous_count,
+        "summary": " ".join(summary_parts),
     })

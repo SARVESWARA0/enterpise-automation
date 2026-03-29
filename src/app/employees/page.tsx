@@ -30,87 +30,60 @@ export default function EmployeesPage() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", padding: 24, background: "var(--bg-primary)" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32 }}>
-          <div>
-            <h1 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: 4, color: "var(--text-bright)" }}>
-              Employee Directory
-            </h1>
-            <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-              {employees.length} employees registered
-            </p>
-          </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <a href="/" className="btn-secondary">← Back</a>
-          </div>
+    <div className="page-container">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1>Employee Directory</h1>
+          <p>{employees.length} employees registered</p>
         </div>
+      </div>
 
-        {/* Table */}
-        <div className="panel" style={{ overflow: "auto" }}>
-          {loading ? (
-            <div style={{ padding: 40, textAlign: "center" }}>
-              <div className="spinner" style={{ margin: "0 auto" }} />
-            </div>
-          ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-sans)" }}>
-              <thead>
-                <tr style={{ borderBottom: "1px solid var(--border)" }}>
-                  {["Employee ID", "Name", "Email", "Company Email", "Role", "Department", "Buddy", "Status", "Joined"].map((h) => (
-                    <th
-                      key={h}
-                      style={{
-                        padding: "12px 16px", textAlign: "left", fontSize: "0.65rem",
-                        fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em",
-                        color: "var(--text-muted)", fontFamily: "var(--font-mono)"
-                      }}
-                    >
-                      {h}
-                    </th>
-                  ))}
+      <div className="panel" style={{ overflow: "auto" }}>
+        {loading ? (
+          <div className="loading-state">
+            <div className="spinner" />
+          </div>
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Company Email</th>
+                <th>Role</th>
+                <th>Department</th>
+                <th>Buddy</th>
+                <th>Status</th>
+                <th>Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              {employees.map((emp) => (
+                <tr key={emp.id} style={{ cursor: "default" }}>
+                  <td className="cell-accent">{emp.employee_id || "—"}</td>
+                  <td className="cell-bright">{emp.name}</td>
+                  <td>{emp.email}</td>
+                  <td>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: emp.company_email ? "var(--success)" : "var(--text-muted)" }}>
+                      {emp.company_email || "—"}
+                    </span>
+                  </td>
+                  <td>{emp.role}</td>
+                  <td>{emp.department}</td>
+                  <td>{emp.buddy || "—"}</td>
+                  <td>
+                    <span className={`badge badge-${emp.status.toLowerCase()}`}>
+                      {emp.status}
+                    </span>
+                  </td>
+                  <td className="cell-mono">{new Date(emp.created_at).toLocaleDateString()}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {employees.map((emp) => (
-                  <tr key={emp.id} style={{ borderBottom: "1px solid var(--border)" }}>
-                    <td style={cellStyle}>
-                      <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600 }}>
-                        {emp.employee_id || "—"}
-                      </span>
-                    </td>
-                    <td style={{ ...cellStyle, fontWeight: 600, color: "var(--text-bright)" }}>{emp.name}</td>
-                    <td style={cellStyle}>{emp.email}</td>
-                    <td style={cellStyle}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: emp.company_email ? "var(--success)" : "var(--text-muted)" }}>
-                        {emp.company_email || "—"}
-                      </span>
-                    </td>
-                    <td style={cellStyle}>{emp.role}</td>
-                    <td style={cellStyle}>{emp.department}</td>
-                    <td style={cellStyle}>{emp.buddy || "—"}</td>
-                    <td style={cellStyle}>
-                      <span className={`badge badge-${emp.status.toLowerCase()}`}>
-                        {emp.status === "ACTIVE" && "●"} {emp.status}
-                      </span>
-                    </td>
-                    <td style={{ ...cellStyle, color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: "0.7rem" }}>
-                      {new Date(emp.created_at).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
 }
-
-const cellStyle: React.CSSProperties = {
-  padding: "12px 16px",
-  fontSize: "0.8rem",
-  color: "var(--text-secondary)",
-};
-

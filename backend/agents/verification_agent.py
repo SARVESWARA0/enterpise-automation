@@ -2,13 +2,9 @@
 Verification Agent — Quality control layer.
 Inspects execution output and returns a binary VERIFIED/FAILED verdict.
 """
-import os
-
 from strands import Agent
-from strands.models.openai import OpenAIModel
-from dotenv import load_dotenv
 
-load_dotenv()
+from agents.model_provider import get_model
 
  
 VERIFICATION_SYSTEM_PROMPT = """
@@ -129,21 +125,12 @@ Input: send_onboarding_email_tool returned {}
 → {"verdict":"FAILED","confidence":0.85,"reason":"Tool returned empty object — no delivery confirmation present","suggested_recovery":"RETRY"}
 """
 
-def _get_model():
-    return OpenAIModel(
-        client_args={
-            "api_key": os.getenv("OPENAI_API_KEY"),
-            "base_url": os.getenv("OPENAI_BASE_URL"),
-        },
-        model_id=os.getenv("OPENAI_MODEL_ID", "gpt-4.1-nano"),
-    )
-
 
 def get_verification_agent() -> Agent:
     """Returns a configured Verification Agent (no tools — reasoning only)."""
     return Agent(
         system_prompt=VERIFICATION_SYSTEM_PROMPT,
-        model=_get_model(),
+        model=get_model(),
         tools=[],
         callback_handler=None,
     )
