@@ -35,15 +35,20 @@ enum StepStatus {
 }
 
 model Employee {
-  id         String         @id @default(uuid())
-  name       String
-  email      String         @unique
-  role       String
-  department String
-  status     EmployeeStatus @default(PENDING)
-  createdAt  DateTime       @default(now()) @map("created_at")
-  updatedAt  DateTime       @updatedAt @map("updated_at")
-  workflows  Workflow[]
+  id           String         @id @default(uuid())
+  employeeId   String?        @map("employee_id")
+  name         String
+  email        String         @unique
+  managerId    String?        @map("manager_id")
+  companyEmail String?        @map("company_email")
+  role         String
+  department   String
+  buddy        String?
+  availabilityStatus String?  @default("available") @map("availability_status")
+  status       EmployeeStatus @default(PENDING)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  workflows    Workflow[]
 
   @@map("employees")
 }
@@ -126,4 +131,117 @@ model AuditLog {
   step     Step?    @relation(fields: [stepId], references: [id], onDelete: Cascade)
 
   @@map("audit_logs")
+}
+
+model Meeting {
+  meetingId   String   @id @default(uuid()) @map("meeting_id")
+  transcript  String
+  participants Json
+  meetingDate DateTime @default(now()) @map("meeting_date")
+  source      String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  tasks       Task[]
+
+  @@map("meetings")
+}
+
+model Task {
+  taskId            String    @id @default(uuid()) @map("task_id")
+  title             String
+  description       String
+  owner             String?
+  status            String
+  priority          String    @default("medium")
+  dueDate           DateTime? @map("due_date")
+  sourceMeetingId   String?   @map("source_meeting_id")
+  rawText           String?   @map("raw_text")
+  parsedIntent      Json?     @map("parsed_intent")
+  reasonForCreation String?   @map("reason_for_creation")
+  confidenceScore   Float?    @default(0) @map("confidence_score")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  meeting     Meeting?      @relation(fields: [sourceMeetingId], references: [meetingId], onDelete: SetNull)
+  actionItems ActionItem[]
+
+  @@map("tasks")
+}
+
+model ActionItem {
+  actionItemId   String   @id @default(uuid()) @map("action_item_id")
+  taskId         String?  @map("task_id")
+  rawText        String   @map("raw_text")
+  parsedIntent   Json?    @map("parsed_intent")
+  ownerDetected  String?  @map("owner_detected")
+  ambiguityFlag  Boolean  @default(false) @map("ambiguity_flag")
+  ambiguityReason String? @map("ambiguity_reason")
+  possibleOwners Json     @default("[]") @map("possible_owners")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  task Task? @relation(fields: [taskId], references: [taskId], onDelete: Cascade)
+
+  @@map("action_items")
+}
+
+model ApprovalRequest {
+  approvalId          String    @id @default(uuid()) @map("approval_id")
+  requestType         String    @map("request_type")
+  currentApprover     String?   @map("current_approver")
+  delegateApprover    String?   @map("delegate_approver")
+  status              String
+  slaDeadline         DateTime  @map("sla_deadline")
+  lastReminderSentAt  DateTime? @map("last_reminder_sent_at")
+  emailSentStatus     String?   @map("email_sent_status")
+  rerouteReason       String?   @map("reroute_reason")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  @@map("approval_requests")
+}
+
+model WorkflowRun {
+  workflowRunId    String    @id @default(uuid()) @map("workflow_run_id")
+  workflowType     String    @map("workflow_type")
+  currentStep      String?   @map("current_step")
+  stepStatus       String    @default("pending") @map("step_status")
+  inputPayload     Json?     @map("input_payload")
+  outputPayload    Json?     @map("output_payload")
+  errorMessage     String?   @map("error_message")
+  retryCount       Int       @default(0) @map("retry_count")
+  escalationStatus String?   @default("none") @map("escalation_status")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  steps            WorkflowRunStep[]
+
+  @@map("workflow_runs")
+}
+
+model WorkflowRunStep {
+  id            String   @id @default(uuid())
+  workflowRunId String   @map("workflow_run_id")
+  stepName      String   @map("step_name")
+  stepStatus    String   @map("step_status")
+  inputPayload  Json?    @map("input_payload")
+  outputPayload Json?    @map("output_payload")
+  errorMessage  String?  @map("error_message")
+  retryCount    Int      @default(0) @map("retry_count")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  workflowRun WorkflowRun @relation(fields: [workflowRunId], references: [workflowRunId], onDelete: Cascade)
+
+  @@map("workflow_run_steps")
+}
+
+model EnterpriseAuditLog {
+  logId      String   @id @default(uuid()) @map("log_id")
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id")
+  eventType  String   @map("event_type")
+  message    String
+  actor      String
+  timestamp  DateTime @default(now())
+  metadata   Json?
+
+  @@map("enterprise_audit_logs")
 }

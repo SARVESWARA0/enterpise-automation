@@ -1,169 +1,260 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useRef, use } from 'react';
+import { useEffect, useReducer, useRef, useState } from "react";
+import { useParams } from "next/navigation";
+import ExecutionPlan from "../../components/ExecutionPlan";
+import AgentStream from "../../components/AgentStream";
+import AgentRoster from "../../components/AgentRoster";
+import AuditTrail from "../../components/AuditTrail";
 
-interface Step { id?: string; stepName: string; stepDescription?: string; toolName?: string; status: string; assignedAgent: string; retryCount: number; dependencyOrder: number; }
-interface StreamEvent { type: string; workflowId: string; stepId?: string; agentName?: string; message: string; data?: any; timestamp?: string; }
-interface Workflow { id: string; type: string; status: string; plan?: Step[]; steps: Step[]; }
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-export default function WorkflowChatPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const [workflow, setWorkflow] = useState<Workflow | null>(null);
-  const [events, setEvents] = useState<StreamEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const chatRef = useRef<HTMLDivElement>(null);
-  const eventSourceRef = useRef<EventSource | null>(null);
+interface StreamEvent {
+  event_type: string;
+  agent: string;
+  step_id?: string;
+  data: any;
+  timestamp: string;
+}
 
-  // Fetch workflow data
-  useEffect(() => {
-    const fetchWorkflow = () => fetch(`/api/workflows/${id}`).then(r => r.json()).then(d => { setWorkflow(d); setLoading(false); });
-    fetchWorkflow();
-    const i = setInterval(fetchWorkflow, 3000);
-    return () => clearInterval(i);
-  }, [id]);
+interface Step {
+  step_id: number;
+  name: string;
+  tool_name: string;
+  status: string;
+}
 
-  // SSE stream
-  useEffect(() => {
-    const es = new EventSource(`/api/workflows/${id}/stream`);
-    eventSourceRef.current = es;
+interface AgentState {
+  active: boolean;
+  action: string;
+}
 
-    es.onmessage = (e) => {
-      try {
-        const event: StreamEvent = JSON.parse(e.data);
-        setEvents(prev => [...prev, event]);
-      } catch {}
+interface DashState {
+  status: string;
+  steps: Step[];
+  events: StreamEvent[];
+  agents: Record<string, AgentState>;
+  summary: any;
+}
+
+type DashAction =
+  | StreamEvent
+  | {
+      type: "hydrate";
+      payload: DashState;
     };
 
-    es.onerror = () => { es.close(); };
-    return () => { es.close(); };
-  }, [id]);
+const INITIAL: DashState = {
+  status: "CONNECTING",
+  steps: [],
+  events: [],
+  agents: {
+    interpreter: { active: false, action: "Idle" },
+    execution: { active: false, action: "Idle" },
+    verification: { active: false, action: "Idle" },
+    recovery: { active: false, action: "Idle" },
+  },
+  summary: null,
+};
 
-  // Auto-scroll stream
+function reducer(state: DashState, action: DashAction): DashState {
+  if ("type" in action && action.type === "hydrate") {
+    return action.payload;
+  }
+
+  const event = action as StreamEvent;
+  const next = { ...state, events: [...state.events, event] };
+
+  switch (event.event_type) {
+    case "plan":
+      next.status = "RUNNING";
+      next.steps = (event.data?.steps || []).map((s: any) => ({
+        step_id: s.step_id,
+        name: s.name,
+        tool_name: s.tool_name,
+        status: "PENDING",
+      }));
+      break;
+
+    case "step_start":
+      next.status = "RUNNING";
+      next.steps = next.steps.map((s) =>
+        s.step_id === event.data?.step_id ? { ...s, status: "RUNNING" } : s
+      );
+      break;
+
+    case "step_complete":
+      next.steps = next.steps.map((s) =>
+        s.step_id === event.data?.step_id
+          ? { ...s, status: event.data?.status || "COMPLETED" }
+          : s
+      );
+      break;
+
+    case "step_failed":
+      next.steps = next.steps.map((s) =>
+        s.step_id === event.data?.step_id
+          ? { ...s, status: event.data?.status || "FAILED" }
+          : s
+      );
+      break;
+
+    case "agent_active":
+      next.agents = {
+        ...next.agents,
+        [event.agent]: {
+          active: event.data?.active ?? false,
+          action: event.data?.action || "Idle",
+        },
+      };
+      break;
+
+    case "workflow_complete":
+      next.status = event.data?.status || "COMPLETED";
+      next.summary = event.data;
+      break;
+  }
+
+  return next;
+}
+
+export default function WorkflowDashboard() {
+  const params = useParams();
+  const workflowId = params.id as string;
+  const [state, dispatch] = useReducer(reducer, INITIAL);
+  const eventSourceRef = useRef<EventSource | null>(null);
+
   useEffect(() => {
-    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
-  }, [events]);
+    if (!workflowId) return;
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '100px' }}><div className="spinner" /></div>;
-  if (!workflow) return <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Workflow not found</div>;
+    let isActive = true;
+    eventSourceRef.current?.close();
 
-  const getAgentColor = (agent?: string) => {
-    if (agent === 'PlannerAgent') return 'var(--purple)';
-    if (agent === 'ExecutionAgent') return 'var(--info)';
-    if (agent === 'VerificationAgent') return 'var(--success)';
-    if (agent === 'RecoveryAgent') return 'var(--warning)';
-    if (agent === 'Orchestrator') return 'var(--accent)';
-    if (agent === 'Graph') return 'var(--text-muted)';
-    return 'var(--text-muted)';
-  };
+    const init = async () => {
+      try {
+        const wfRes = await fetch(`${API}/api/workflows/${workflowId}`);
+        if (!wfRes.ok) throw new Error("Workflow fetch failed");
+        const wf = await wfRes.json();
 
-  const getAgentAvatar = (agent?: string) => {
-    if (agent === 'PlannerAgent') return '🧠';
-    if (agent === 'ExecutionAgent') return '⚡';
-    if (agent === 'VerificationAgent') return '✅';
-    if (agent === 'RecoveryAgent') return '🚑';
-    if (agent === 'Orchestrator') return '🎯';
-    if (agent === 'Graph') return '📊';
-    return '🤖';
-  };
+        // Always try to hydrate from saved events first
+        const eventsRes = await fetch(`${API}/api/workflows/${workflowId}/events`);
+        const eventsPayload = eventsRes.ok ? await eventsRes.json() : { events: [] };
+        const historicalEvents: StreamEvent[] = Array.isArray(eventsPayload?.events)
+          ? eventsPayload.events
+          : [];
 
+        let hydrated = INITIAL;
+        for (const event of historicalEvents) {
+          if (!event?.event_type || event.event_type === "heartbeat") continue;
+          hydrated = reducer(hydrated, event);
+        }
+
+        const terminalStatuses = ["COMPLETED", "FAILED", "ESCALATED"];
+
+        if (terminalStatuses.includes(wf.status)) {
+          // Workflow is finished — just show the hydrated state
+          if (!terminalStatuses.includes(hydrated.status)) {
+            hydrated = {
+              ...hydrated,
+              status: wf.status,
+              summary: hydrated.summary ?? {
+                status: wf.status,
+                summary: "Loaded saved workflow execution.",
+              },
+            };
+          }
+          if (isActive) dispatch({ type: "hydrate", payload: hydrated });
+          return;
+        }
+
+        // Workflow is still running (or pending/scheduled) — hydrate existing events,
+        // then connect SSE to receive new events on top
+        if (hydrated.events.length > 0) {
+          hydrated.status = "RUNNING";
+        } else {
+          hydrated.status = wf.status === "SCHEDULED" ? "SCHEDULED" : "CONNECTING";
+        }
+        if (isActive) dispatch({ type: "hydrate", payload: hydrated });
+
+        const es = new EventSource(`${API}/api/workflows/${workflowId}/stream`);
+        eventSourceRef.current = es;
+
+        es.onmessage = (e) => {
+          try {
+            const event: StreamEvent = JSON.parse(e.data);
+            if (event.event_type === "heartbeat") return;
+            dispatch(event);
+            if (event.event_type === "workflow_complete") {
+              es.close();
+            }
+          } catch (err) {
+            console.error("SSE parse error:", err);
+          }
+        };
+
+        es.onerror = () => {
+          console.warn("SSE connection lost");
+        };
+      } catch (err) {
+        console.error("Failed to initialize workflow view:", err);
+      }
+    };
+
+    init();
+
+    return () => {
+      isActive = false;
+      eventSourceRef.current?.close();
+    };
+  }, [workflowId]);
+
+  const completedSteps = state.steps.filter((s) => s.status === "COMPLETED").length;
+  const totalSteps = state.steps.length;
+  const pct = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
-      <div className="page-header" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 className="page-title">Autopilot Chat</h1>
-          <p className="page-subtitle">Monitoring dynamic execution</p>
+    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      {/* Header */}
+      <div className="dash-header">
+        <div className="logo">
+          <span className="accent">⚡</span> ET Autopilot
+          <span style={{ color: "var(--text-muted)", fontWeight: 400, fontSize: "0.7rem", marginLeft: 8 }}>
+            v2 • Graph Orchestration
+          </span>
         </div>
-        <span className={`badge badge-${(workflow.status || 'pending').toLowerCase()}`} style={{ fontSize: '1rem', padding: '8px 16px' }}>
-          {workflow.status === 'RUNNING' && <span className="pulse-dot" style={{ background: 'var(--info)', width: '10px', height: '10px' }} />}
-          {workflow.status || 'LOADING'}
-        </span>
+        <div className="meta">
+          <span className={`badge badge-${state.status.toLowerCase()}`}>
+            {state.status === "RUNNING" && <span className="pulse-dot" style={{ background: "var(--info)" }} />}
+            {state.status}
+          </span>
+          {totalSteps > 0 && (
+            <span>{completedSteps}/{totalSteps} steps</span>
+          )}
+          <a href="/" style={{ color: "var(--text-muted)", textDecoration: "none", fontSize: "0.75rem" }}>← Home</a>
+        </div>
       </div>
 
-      <div className="glass-card" style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', padding: 0 }}>
-        {/* Chat Feed */}
-        <div ref={chatRef} style={{ flex: 1, overflowY: 'auto', padding: '30px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          
-          {/* User Prompt Message */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
-            <div style={{
-              background: 'var(--accent)',
-              color: 'white',
-              padding: '16px 24px',
-              borderRadius: '24px 24px 4px 24px',
-              maxWidth: '80%',
-              fontSize: '1.1rem',
-              boxShadow: '0 4px 15px rgba(99, 102, 241, 0.3)'
-            }}>
-              {workflow.type}
-            </div>
+      {/* Progress */}
+      {totalSteps > 0 && (
+        <div style={{ padding: "0 16px" }}>
+          <div className="progress-bar-bg">
+            <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
           </div>
+        </div>
+      )}
 
-          {events.length === 0 && workflow.status === 'RUNNING' && (
-             <div style={{ display: 'flex', gap: '15px' }}>
-             <div style={{ fontSize: '1.5rem' }}>🤖</div>
-             <div style={{ background: 'var(--surface-50)', padding: '16px 20px', borderRadius: '4px 24px 24px 24px', color: 'var(--text-muted)' }}>
-               Thinking...
-             </div>
-           </div>
-          )}
-
-          {events.filter(e => 
-            e.type.startsWith('chat:') || 
-            e.type.startsWith('agent:') || 
-            e.type === 'workflow:start' || 
-            e.type === 'workflow:complete' || 
-            e.type === 'workflow:failed'
-          ).map((evt, i) => {
-            const isPlanner = evt.type === 'chat:planning_started' || evt.type === 'chat:plan_generated';
-            const isError = evt.type === 'chat:error' || evt.type === 'workflow:failed';
-            const isSuccess = evt.type === 'chat:step_complete' || evt.type === 'workflow:complete';
-            const isSystem = evt.type === 'workflow:start' || evt.type === 'workflow:complete' || evt.type === 'workflow:failed';
-            const agent = isSystem ? 'Orchestrator' : (isPlanner ? 'PlannerAgent' : evt.agentName || 'System');
-            
-            return (
-              <div key={i} style={{ display: 'flex', gap: '15px', maxWidth: '85%' }}>
-                <div style={{ 
-                  width: '40px', height: '40px', borderRadius: '50%', 
-                  background: 'var(--surface-100)', display: 'flex', 
-                  alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem',
-                  border: `2px solid ${getAgentColor(agent)}`,
-                  flexShrink: 0
-                }}>
-                  {getAgentAvatar(agent)}
-                </div>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: getAgentColor(agent) }}>
-                    {agent} <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontSize: '0.7rem', marginLeft: '8px' }}>{evt.timestamp ? new Date(evt.timestamp).toLocaleTimeString() : ''}</span>
-                  </div>
-                  
-                  <div style={{ 
-                    background: isError ? 'rgba(239, 68, 68, 0.1)' : 'var(--surface-50)', 
-                    border: isError ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid var(--border)',
-                    padding: '16px 20px', 
-                    borderRadius: '4px 24px 24px 24px',
-                    color: isError ? 'var(--danger)' : 'var(--text-primary)',
-                    fontSize: '0.95rem',
-                    lineHeight: '1.5'
-                  }}>
-                    {evt.message}
-
-                    {/* Render Plan JSON nicely */}
-                    {evt.type === 'chat:plan_generated' && evt.data?.steps && (
-                      <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {evt.data.steps.map((s: Step, j: number) => (
-                          <div key={j} style={{ background: 'var(--surface-100)', padding: '12px', borderRadius: '8px', borderLeft: '3px solid var(--info)' }}>
-                            <div style={{ fontWeight: 600, marginBottom: '4px' }}>{j+1}. {s.stepName}</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{s.stepDescription || s.toolName}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+      {/* 4-Panel Grid */}
+      <div className="dashboard-grid">
+        <div className="panel plan-panel">
+          <ExecutionPlan steps={state.steps} />
+        </div>
+        <div className="panel stream-panel">
+          <AgentStream events={state.events} />
+        </div>
+        <div className="panel roster-panel">
+          <AgentRoster agents={state.agents} />
+        </div>
+        <div className="panel audit-panel">
+          <AuditTrail events={state.events} />
         </div>
       </div>
     </div>

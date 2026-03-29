@@ -1,103 +1,121 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-interface DashboardData {
-  employees: { total: number; active: number };
-  workflows: { total: number; running: number; completed: number; failed: number; escalated: number };
-  recentActivity: Array<{ id: string; decision: string; reason: string; agentName: string; timestamp: string; status: string }>;
-}
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+const SCENARIOS = [
+  {
+    icon: "👋",
+    title: "Employee Onboarding",
+    desc: "Full autonomous onboarding: HR account, email, JIRA, buddy assignment, orientation, welcome email.",
+    request: "Onboard Priya Sharma as a new Software Engineer in the Engineering department. Her email is priya.sharma@company.com.",
+    name: "Priya Sharma",
+    email: "priya.sharma@company.com",
+    role: "Software Engineer",
+    department: "Engineering",
+    trigger: "employee_onboarding",
+  },
+  {
+    icon: "💬",
+    title: "Meeting Action Items",
+    desc: "Extract action items from transcript, create tasks for each, and send a summary email to stakeholders.",
+    request: "Process this meeting transcript: Sprint planning discussed UI refresh (Alice), API migration (Bob), deadline Friday. Carol to update staging. David to review security. Send summary to team.",
+    trigger: "meeting_action_items",
+  },
+  {
+    icon: "⏱️",
+    title: "SLA Breach Response",
+    desc: "Detect SLA breach, find delegate, reroute approval, and log audit trail for compliance.",
+    request: "SLA breach detected for ticket PROD-4521 in Engineering department. The original assignee is on leave. Reroute and escalate appropriately.",
+    trigger: "sla_breach",
+  },
+];
 
-  useEffect(() => {
-    fetch('/api/dashboard').then(r => r.json()).then(d => { setData(d); setLoading(false); }).catch(() => setLoading(false));
-    const interval = setInterval(() => { fetch('/api/dashboard').then(r => r.json()).then(setData); }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+export default function LandingPage() {
+  const [selected, setSelected] = useState<number | null>(null);
+  const [customRequest, setCustomRequest] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '100px' }}><div className="spinner" /></div>;
+  const handleRun = async () => {
+    setLoading(true);
+    try {
+      const body = { request: customRequest, trigger: "manual" };
+
+      const res = await fetch(`${API}/api/workflows/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      router.push(`/workflows/${data.workflowId}`);
+    } catch (err) {
+      console.error("Failed to start workflow:", err);
+      setLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <div className="page-header">
-        <h1 className="page-title">Enterprise Autopilot</h1>
-        <p className="page-subtitle">Multi-Agent Autonomous Workflow Orchestration</p>
-      </div>
-
-      {/* Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="glass-card stat-card">
-          <span className="stat-value">{data?.employees.total || 0}</span>
-          <span className="stat-label">Total Employees</span>
-        </div>
-        <div className="glass-card stat-card">
-          <span className="stat-value">{data?.workflows.total || 0}</span>
-          <span className="stat-label">Total Workflows</span>
-        </div>
-        <div className="glass-card stat-card">
-          <span className="stat-value" style={{ background: 'linear-gradient(135deg, #10b981, #34d399)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{data?.workflows.completed || 0}</span>
-          <span className="stat-label">Completed</span>
-        </div>
-        <div className="glass-card stat-card">
-          <span className="stat-value" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{data?.workflows.running || 0}</span>
-          <span className="stat-label">Running</span>
-        </div>
-        <div className="glass-card stat-card">
-          <span className="stat-value" style={{ background: 'linear-gradient(135deg, #f59e0b, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{data?.workflows.escalated || 0}</span>
-          <span className="stat-label">Escalated</span>
-        </div>
-        <div className="glass-card stat-card">
-          <span className="stat-value" style={{ background: 'linear-gradient(135deg, #ef4444, #f87171)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{data?.workflows.failed || 0}</span>
-          <span className="stat-label">Failed</span>
+    <div className="landing">
+      <div className="landing-hero">
+        <h1>Enterprise Autopilot</h1>
+        <p>
+          Multi-agent AI that plans, executes, verifies, and recovers enterprise
+          workflows autonomously — with <strong>zero hand-holding</strong>.
+        </p>
+        <div className="metric-banner">
+          <span className="pulse-dot" style={{ background: "#10b981" }} />
+          ET AI Hackathon 2026 — PS2: Agentic AI
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <Link href="/employees" style={{ textDecoration: 'none' }}>
-          <div className="glass-card" style={{ padding: '20px', cursor: 'pointer' }}>
-            <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>◈</div>
-            <div style={{ fontWeight: 600, marginBottom: '4px' }}>Employee Onboarding</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Create employees and watch the autonomous onboarding workflow execute</div>
+      <div className="scenario-grid">
+        {SCENARIOS.map((s, i) => (
+          <div
+            key={i}
+            className={`scenario-card${selected === i ? " active" : ""}`}
+            onClick={() => {
+              if (s.trigger === "employee_onboarding") router.push("/onboarding");
+              else if (s.trigger === "meeting_action_items") router.push("/tasks");
+              else if (s.trigger === "sla_breach") router.push("/sla");
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="scenario-icon">{s.icon}</div>
+            <div className="scenario-title">{s.title}</div>
+            <div className="scenario-desc">{s.desc}</div>
           </div>
-        </Link>
-        <Link href="/workflows/new" style={{ textDecoration: 'none' }}>
-          <div className="glass-card" style={{ padding: '20px', cursor: 'pointer' }}>
-            <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>✦</div>
-            <div style={{ fontWeight: 600, marginBottom: '4px' }}>Custom Workflow</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Enter any workflow description and watch dynamic multi-agent execution</div>
-          </div>
-        </Link>
-        <Link href="/audit" style={{ textDecoration: 'none' }}>
-          <div className="glass-card" style={{ padding: '20px', cursor: 'pointer' }}>
-            <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>◉</div>
-            <div style={{ fontWeight: 600, marginBottom: '4px' }}>Audit Trail</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Full audit logs with every decision, tool call, and recovery action</div>
-          </div>
-        </Link>
+        ))}
       </div>
 
-      {/* Recent Activity */}
-      <div className="glass-card" style={{ padding: '20px' }}>
-        <h3 style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '16px', margin: '0 0 16px 0' }}>Recent Activity</h3>
-        {(!data?.recentActivity || data.recentActivity.length === 0) ? (
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>No recent activity. Create an employee to trigger a workflow!</p>
+      <div className="custom-input-area">
+        <textarea
+          className="input-field"
+          style={{ minHeight: "120px", resize: "vertical", fontSize: "16px", padding: "16px" }}
+          placeholder="Or describe a custom workflow here..."
+          value={customRequest}
+          onChange={(e) => setCustomRequest(e.target.value)}
+        />
+      </div>
+
+      <button
+        className="btn-primary"
+        disabled={loading || !customRequest.trim()}
+        onClick={handleRun}
+        style={{ minWidth: 200 }}
+      >
+        {loading ? (
+          <>
+            <div className="spinner" /> Starting...
+          </>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {data.recentActivity.map((log) => (
-              <div key={log.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.03)' }}>
-                <span className={`badge badge-${log.status || 'pending'}`}>{log.status || 'info'}</span>
-                <span style={{ flex: 1, fontSize: '0.8rem' }}>{log.decision}: {log.reason?.substring(0, 80)}</span>
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{new Date(log.timestamp).toLocaleTimeString()}</span>
-              </div>
-            ))}
-          </div>
+          "Run Workflow"
         )}
-      </div>
+      </button>
+
+      
     </div>
   );
 }

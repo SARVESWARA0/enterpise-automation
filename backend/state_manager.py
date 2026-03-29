@@ -28,6 +28,7 @@ def create_employee(name: str, email: str, role: str, department: str) -> dict:
     emp_id = str(uuid.uuid4())
     emp = {
         "id": emp_id,
+        "employeeId": None,
         "name": name,
         "email": email,
         "role": role,
@@ -172,6 +173,28 @@ def get_audit_logs(workflow_id: str | None = None) -> list[dict]:
     return all_logs
 
 
+def update_step_status(workflow_id: str, step_index: int, updates: dict) -> dict | None:
+    """Update a single step within a workflow's step list.
+
+    Args:
+        workflow_id: The workflow ID.
+        step_index: Index of the step to update.
+        updates: Dict of fields to update on the step.
+
+    Returns:
+        The updated workflow dict, or None if not found.
+    """
+    wf = get_workflow(workflow_id)
+    if not wf:
+        return None
+    steps = wf.get("steps", [])
+    if step_index < 0 or step_index >= len(steps):
+        return None
+    steps[step_index].update(updates)
+    return update_workflow(workflow_id, {"steps": steps})
+
+
+
 # ---------- Stream Events ----------
 
 import threading
@@ -199,7 +222,7 @@ def append_stream_event(workflow_id: str, event: dict):
         # Write to a temporary file then rename for atomic replacement
         temp_path = f"{path}.tmp"
         with open(temp_path, "w", encoding="utf-8") as f:
-            json.dump(events, f, indent=2)
+            json.dump(events, f)
         os.replace(temp_path, path)
 
 
