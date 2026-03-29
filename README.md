@@ -137,7 +137,6 @@ The FastAPI app loads `backend/.env` (via `python-dotenv`). The database layer a
 | -------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `DATABASE_URL` or `DB_URL` | Yes               | Same PostgreSQL connection string as the frontend Prisma setup.                                                                 |
 | `OPENAI_API_KEY`           | Yes (OpenAI path) | API key for the OpenAI-compatible endpoint.                                                                                     |
-| `OPENAI_BASE_URL`          | No                | **OpenAI proxy / custom gateway:** base URL of a compatible API (e.g. corporate proxy). Omit or leave empty for default OpenAI. |
 | `OPENAI_MODEL_ID`          | No                | Model name your proxy or OpenAI serves (default in code: `gpt-4.1-nano` if unset).                                              |
 | `STATE_DIR`                | No                | Directory for workflow stream state files (default relative to backend if configured in your env).                              |
 | `SMTP_SERVER`              | No*               | SMTP host for email-related tools (e.g. `smtp.gmail.com`).                                                                      |
@@ -154,9 +153,9 @@ Example `backend/.env` (placeholders only):
 # Database (same logical DB as Prisma)
 DATABASE_URL=postgresql://autopilot:your_secure_password@localhost:5432/enterprise_autopilot
 
-# OpenAI-compatible API (proxy: set BASE_URL to your gateway)
+
 OPENAI_API_KEY=your_key_here
-OPENAI_BASE_URL=https://your-proxy.example.com/v1/
+
 OPENAI_MODEL_ID=gpt-5-mini
 
 # Optional persistence for streams
