@@ -66,7 +66,6 @@ def get_model() -> Any:
     return OpenAIModel(
         client_args={
             "api_key": os.getenv("OPENAI_API_KEY"),
-            "base_url": os.getenv("OPENAI_BASE_URL"),
         },
         model_id=os.getenv("OPENAI_MODEL_ID", "gpt-4.1-nano"),
     )
