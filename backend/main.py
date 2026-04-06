@@ -9,8 +9,9 @@ import sys
 import json
 from datetime import datetime, timezone, timedelta
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from starlette.responses import StreamingResponse
 
 from dotenv import load_dotenv
@@ -28,6 +29,7 @@ from models import (
 from orchestrator.workflow_engine import run_workflow, sse_stream, get_or_create_queue
 from state_manager import get_stream_events
 from mcp_server import send_email as send_email_tool
+from document_processor import extract_metadata, validate_against_employee
 
 
 def _parse_iso_datetime(value: str) -> datetime:
@@ -179,6 +181,299 @@ async def get_employee(employee_id: str):
     if not emp:
         raise HTTPException(404, "Employee not found")
     return emp
+
+# ── Employee Documents ───────────────────────────────────────────────────────
+
+UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
+os.makedirs(UPLOADS_DIR, exist_ok=True)
+
+
+@app.post("/api/employees/{employee_id}/documents")
+async def upload_employee_document(employee_id: str, file: UploadFile = File(...)):
+    """Upload a document for an employee, extract metadata, and validate."""
+    emp = db.get_employee_by_id(employee_id)
+    if not emp:
+        raise HTTPException(404, "Employee not found")
+
+    # Validate file type
+    allowed_types = {
+        "application/pdf": "pdf",
+        "image/png": "image",
+        "image/jpeg": "image",
+        "image/jpg": "image",
+        "image/webp": "image",
+    }
+    content_type = file.content_type or ""
+    if content_type not in allowed_types:
+        raise HTTPException(400, f"Unsupported file type: {content_type}. Allowed: PDF, PNG, JPG, WebP")
+
+    file_type = allowed_types[content_type]
+
+    # Save file
+    import uuid as _uuid
+    ext = os.path.splitext(file.filename or "doc")[1] or (".pdf" if file_type == "pdf" else ".png")
+    saved_filename = f"{_uuid.uuid4().hex}{ext}"
+    filepath = os.path.join(UPLOADS_DIR, saved_filename)
+
+    contents = await file.read()
+    with open(filepath, "wb") as f:
+        f.write(contents)
+
+    file_size = len(contents)
+
+    # Extract metadata
+    try:
+        extraction = extract_metadata(filepath, file_type, file.filename or "")
+    except Exception as e:
+        extraction = {"category": "unknown", "fields": {}, "error": str(e)}
+
+    # Validate against employee record
+    try:
+        validation = validate_against_employee(extraction, emp)
+    except Exception as e:
+        validation = {"status": "pending", "score": 0, "fields": {}, "error": str(e)}
+
+    # Save document record
+    doc = db.create_employee_document(
+        employee_id=employee_id,
+        filename=saved_filename,
+        original_name=file.filename or "unknown",
+        file_type=file_type,
+        file_size=file_size,
+        document_category=extraction.get("category"),
+        extracted_data=extraction,
+        validation_status=validation.get("status", "pending"),
+        validation_details=validation,
+    )
+
+    # Audit log
+    db.log_enterprise_audit(
+        "employee_document", doc["id"], "DOCUMENT_UPLOADED",
+        f"Document '{file.filename}' uploaded for {emp['name']}. Category: {extraction.get('category')}. Validation: {validation.get('status')}.",
+        "document_api",
+        {"employee_id": employee_id, "category": extraction.get("category"),
+         "validation_status": validation.get("status"), "score": validation.get("score")},
+    )
+
+    return {"document": doc, "extraction": extraction, "validation": validation}
+
+
+@app.get("/api/employees/{employee_id}/documents")
+async def list_employee_documents(employee_id: str):
+    """List all documents for an employee."""
+    emp = db.get_employee_by_id(employee_id)
+    if not emp:
+        raise HTTPException(404, "Employee not found")
+    docs = db.get_documents_for_employee(employee_id)
+    return {"employee": emp, "documents": docs}
+
+
+@app.get("/api/documents/{doc_id}/file")
+async def serve_document_file(doc_id: str):
+    """Serve an uploaded document file."""
+    doc = db.get_employee_document(doc_id)
+    if not doc:
+        raise HTTPException(404, "Document not found")
+    filepath = os.path.join(UPLOADS_DIR, doc["filename"])
+    if not os.path.exists(filepath):
+        raise HTTPException(404, "File not found on disk")
+    return FileResponse(filepath, filename=doc["original_name"])
+
+
+# ── Onboarding Document Processing (Parallel, Isolated from Agent Pipeline) ──
+
+async def _process_onboarding_docs_bg(employee_id: str, filepaths: list[tuple[str, str, str]]):
+    """
+    Background task: processes uploaded documents via local Ollama (llama3).
+    Runs IN PARALLEL with the onboarding workflow but is COMPLETELY ISOLATED.
+    Document content NEVER enters the agent orchestration pipeline.
+
+    Args:
+        employee_id:  ID of the newly created employee
+        filepaths:    list of (saved_filename, original_name, file_type)
+    """
+    emp = db.get_employee_by_id(employee_id)
+    if not emp:
+        return
+
+    for saved_filename, original_name, file_type in filepaths:
+        filepath = os.path.join(UPLOADS_DIR, saved_filename)
+        try:
+            print(f"[DocBg] Processing {original_name} for {emp['name']}...")
+
+            # Extract metadata via local Ollama — isolated from orchestrator
+            extraction = extract_metadata(filepath, file_type, original_name)
+
+            # Validate name/email against employee record
+            validation = validate_against_employee(extraction, emp)
+
+            # Store in DB (only structured metadata, never raw text)
+            doc = db.create_employee_document(
+                employee_id=employee_id,
+                filename=saved_filename,
+                original_name=original_name,
+                file_type=file_type,
+                file_size=os.path.getsize(filepath),
+                document_category=extraction.get("category"),
+                extracted_data=extraction,
+                validation_status=validation.get("status", "pending"),
+                validation_details=validation,
+            )
+
+            db.log_enterprise_audit(
+                "employee_document", doc["id"], "ONBOARDING_DOC_PROCESSED",
+                f"Document '{original_name}' processed via Ollama for {emp['name']}. "
+                f"Category: {extraction.get('category')}. "
+                f"Validation: {validation.get('status')} (score: {validation.get('score', 0):.0%}). "
+                f"Method: {extraction.get('extraction_method')}.",
+                "document_processor",
+                {
+                    "employee_id": employee_id,
+                    "category": extraction.get("category"),
+                    "extraction_method": extraction.get("extraction_method"),
+                    "validation_status": validation.get("status"),
+                    "score": validation.get("score"),
+                },
+            )
+
+            print(f"[DocBg] ✓ {original_name} → {extraction.get('category')} | {validation.get('status')}")
+
+        except Exception as e:
+            print(f"[DocBg] ✗ Failed processing {original_name}: {e}")
+            try:
+                db.log_enterprise_audit(
+                    "employee_document", employee_id, "ONBOARDING_DOC_FAILED",
+                    f"Failed to process document '{original_name}': {str(e)[:300]}",
+                    "document_processor",
+                    {"employee_id": employee_id, "original_name": original_name},
+                )
+            except Exception:
+                pass
+
+
+@app.post("/api/onboarding/start-with-docs")
+async def start_onboarding_with_docs(
+    bg: BackgroundTasks,
+    name: str = Form(None),
+    email: str = Form(None),
+    role: str = Form(None),
+    department: str = Form(None),
+    onboarding_date: str = Form(None),
+    onboarding_time: str = Form(None),
+    trigger_mode: str = Form("immediate"),
+    files: list[UploadFile] = File(default=[]),
+):
+    """
+    Start an onboarding workflow AND upload identity documents in one request.
+
+    The two operations run in PARALLEL and are ISOLATED:
+      • Workflow engine receives only form data (name, email, role, dept)
+      • Ollama doc processor receives only file bytes
+      • Raw document content never enters the agent pipeline
+
+    Accepts: multipart/form-data with any combination of:
+      - Aadhaar PDF/image
+      - PAN card PDF/image
+      - Passport PDF/image
+      + employee details as form fields
+    """
+    import uuid as _uuid
+    files = files or []
+
+    # 1. Get or create employee record
+    emp = db.get_employee_by_email(email) if email else None
+    if not emp and name:
+        emp = db.get_employee_by_name(name)
+    if not emp and name and email:
+        emp = db.create_employee(
+            name=name, email=email,
+            role=role or "Employee",
+            department=department or "General",
+        )
+
+    employee_id = emp["id"] if emp else None
+
+    # 2. Save all uploaded files (just bytes → disk, no processing yet)
+    allowed_types = {
+        "application/pdf": "pdf",
+        "image/png": "image",
+        "image/jpeg": "image",
+        "image/jpg": "image",
+        "image/webp": "image",
+    }
+    saved_files = []
+    for upload in files:
+        ct = upload.content_type or ""
+        if ct not in allowed_types:
+            continue
+        ext = os.path.splitext(upload.filename or "doc")[1] or ".pdf"
+        saved_name = f"{_uuid.uuid4().hex}{ext}"
+        fpath = os.path.join(UPLOADS_DIR, saved_name)
+        content = await upload.read()
+        with open(fpath, "wb") as f:
+            f.write(content)
+        saved_files.append((saved_name, upload.filename or "document", allowed_types[ct]))
+
+    # 3. Build the workflow request string (NO document content)
+    request_str = (
+        f"Onboard {name} as a new {role} in the {department} department. "
+        f"Email: {email}."
+    )
+    if onboarding_date and onboarding_time:
+        request_str += f" Onboarding scheduled for {onboarding_date} at {onboarding_time}."
+
+    scheduled_at = None
+    if trigger_mode == "scheduled" and onboarding_date and onboarding_time:
+        try:
+            scheduled_at = datetime.fromisoformat(
+                f"{onboarding_date}T{onboarding_time}"
+            ).astimezone(timezone.utc).isoformat()
+        except Exception:
+            pass
+
+    # 4. Create workflow record (agent gets ONLY metadata, never doc content)
+    wf = db.create_workflow(
+        workflow_type="employee_onboarding",
+        trigger_event="employee_onboarding",
+        entity_id=employee_id,
+        input_data={
+            "request": request_str,
+            "name": name, "email": email,
+            "role": role, "department": department,
+            "doc_count": len(saved_files),  # only count, not content
+        },
+        scheduled_at=scheduled_at,
+    )
+
+    # 5a. Launch Ollama doc processing in background (ISOLATED from workflow)
+    if employee_id and saved_files:
+        bg.add_task(_process_onboarding_docs_bg, employee_id, saved_files)
+
+    # 5b. Launch agent workflow in background (receives NO doc content)
+    if not scheduled_at:
+        get_or_create_queue(wf["id"])
+        bg.add_task(_run_workflow_bg, wf["id"], request_str)
+        status = "STARTED"
+    else:
+        db.log_enterprise_audit(
+            "workflow", wf["id"], "WORKFLOW_SCHEDULED",
+            f"Onboarding workflow scheduled for {scheduled_at}.",
+            "workflow_api",
+            {"scheduled_at": scheduled_at, "name": name},
+        )
+        status = "SCHEDULED"
+
+    return {
+        "workflowId": wf["id"],
+        "employeeId": employee_id,
+        "status": status,
+        "scheduled_at": scheduled_at,
+        "docs_queued": len(saved_files),
+        "message": (
+            f"Onboarding started. {len(saved_files)} document(s) queued for "
+            f"local Ollama processing (isolated from agent pipeline)."
+        ),
+    }
 
 
 # ── Workflows ────────────────────────────────────────────────────────────────

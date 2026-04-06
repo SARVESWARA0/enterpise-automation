@@ -21,6 +21,7 @@ enum WorkflowStatus {
   COMPLETED
   FAILED
   ESCALATED
+  SCHEDULED
 }
 
 enum StepStatus {
@@ -49,8 +50,28 @@ model Employee {
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
   workflows    Workflow[]
+  documents    EmployeeDocument[]
 
   @@map("employees")
+}
+
+model EmployeeDocument {
+  id                String   @id @default(uuid())
+  employeeId        String   @map("employee_id")
+  filename          String
+  originalName      String   @map("original_name")
+  fileType          String   @map("file_type")
+  fileSize          Int      @map("file_size")
+  documentCategory  String?  @map("document_category")
+  extractedData     Json?    @map("extracted_data")
+  validationStatus  String   @default("pending") @map("validation_status")
+  validationDetails Json?    @map("validation_details")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("employee_documents")
 }
 
 model Workflow {
@@ -61,6 +82,7 @@ model Workflow {
   inputData    Json?          @map("input_data")
   status       WorkflowStatus @default(PENDING)
   plan         Json?
+  scheduledAt  DateTime?      @map("scheduled_at")
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
 
@@ -193,6 +215,7 @@ model ApprovalRequest {
   lastReminderSentAt  DateTime? @map("last_reminder_sent_at")
   emailSentStatus     String?   @map("email_sent_status")
   rerouteReason       String?   @map("reroute_reason")
+  metadata            Json?
   createdAt           DateTime  @default(now()) @map("created_at")
   updatedAt           DateTime  @updatedAt @map("updated_at")
 

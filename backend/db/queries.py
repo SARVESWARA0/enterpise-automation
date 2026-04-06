@@ -485,11 +485,99 @@ def ensure_enterprise_tables():
             "CREATE INDEX IF NOT EXISTS idx_steps_workflow_id ON steps(workflow_id)",
             "CREATE INDEX IF NOT EXISTS idx_audit_logs_workflow_id ON audit_logs(workflow_id)",
             "CREATE INDEX IF NOT EXISTS idx_workflows_scheduled ON workflows(scheduled_at) WHERE scheduled_at IS NOT NULL AND status = 'SCHEDULED'",
+            "CREATE INDEX IF NOT EXISTS idx_employee_documents_employee ON employee_documents(employee_id)",
         ]:
             try:
                 cur.execute(idx_sql)
             except Exception:
                 pass  # index may already exist or table missing
+
+        # Employee documents table (for document upload + extraction)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS employee_documents (
+                id TEXT PRIMARY KEY,
+                employee_id TEXT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+                filename TEXT NOT NULL,
+                original_name TEXT NOT NULL,
+                file_type TEXT NOT NULL,
+                file_size INT NOT NULL,
+                document_category TEXT,
+                extracted_data JSONB,
+                validation_status TEXT NOT NULL DEFAULT 'pending',
+                validation_details JSONB,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        """)
+        # Patch updated_at default for employee_documents (Prisma @updatedAt issue)
+        cur.execute("""
+            DO $$ BEGIN
+              IF EXISTS (SELECT 1 FROM information_schema.columns
+                         WHERE table_name = 'employee_documents' AND column_name = 'updated_at') THEN
+                ALTER TABLE employee_documents ALTER COLUMN updated_at SET DEFAULT NOW();
+              END IF;
+            END $$;
+        """)
+
+
+# ── EMPLOYEE DOCUMENTS ───────────────────────────────────────────────────────
+
+def create_employee_document(employee_id: str, filename: str, original_name: str,
+                              file_type: str, file_size: int,
+                              document_category: str | None = None,
+                              extracted_data: dict | None = None,
+                              validation_status: str = "pending",
+                              validation_details: dict | None = None) -> dict:
+    doc_id = str(uuid.uuid4())
+    with get_conn() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO employee_documents (id, employee_id, filename, original_name, file_type,
+                                            file_size, document_category, extracted_data,
+                                            validation_status, validation_details, created_at, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+            RETURNING *
+        """, (doc_id, employee_id, filename, original_name, file_type, file_size,
+              document_category,
+              json.dumps(extracted_data) if extracted_data else None,
+              validation_status,
+              json.dumps(validation_details) if validation_details else None))
+        return _row_to_dict(cur, cur.fetchone())
+
+
+def get_documents_for_employee(employee_id: str) -> list[dict]:
+    with get_conn() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT * FROM employee_documents
+            WHERE employee_id = %s
+            ORDER BY created_at DESC
+        """, (employee_id,))
+        return [_row_to_dict(cur, r) for r in cur.fetchall()]
+
+
+def update_document_validation(doc_id: str, validation_status: str,
+                                validation_details: dict | None = None) -> dict | None:
+    with get_conn() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE employee_documents
+            SET validation_status = %s, validation_details = %s, updated_at = NOW()
+            WHERE id = %s
+            RETURNING *
+        """, (validation_status,
+              json.dumps(validation_details) if validation_details else None,
+              doc_id))
+        row = cur.fetchone()
+        return _row_to_dict(cur, row) if row else None
+
+
+def get_employee_document(doc_id: str) -> dict | None:
+    with get_conn() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM employee_documents WHERE id = %s", (doc_id,))
+        row = cur.fetchone()
+        return _row_to_dict(cur, row) if row else None
 
 
 def log_enterprise_audit(entity_type: str, entity_id: str, event_type: str,

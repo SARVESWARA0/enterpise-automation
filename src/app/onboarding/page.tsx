@@ -24,6 +24,8 @@ export default function OnboardingPage() {
     triggerMode: "scheduled" as "immediate" | "scheduled",
   });
 
+  const [docs, setDocs] = useState<File[]>([]);
+
   async function loadWorkflows() {
     setLoading(true);
     try {
@@ -57,29 +59,28 @@ export default function OnboardingPage() {
     e.preventDefault();
     setCreating(true);
     try {
-      const request = `Onboard ${form.name} as a new ${form.role} in the ${form.department} department. Email: ${form.email}. Onboarding scheduled for ${form.onboardingDate} at ${form.onboardingTime}.`;
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("role", form.role);
+      formData.append("department", form.department);
+      if (form.onboardingDate) formData.append("onboarding_date", form.onboardingDate);
+      if (form.onboardingTime) formData.append("onboarding_time", form.onboardingTime);
+      formData.append("trigger_mode", form.triggerMode);
 
-      let scheduled_at: string | null = null;
-      if (form.triggerMode === "scheduled" && form.onboardingDate && form.onboardingTime) {
-        scheduled_at = new Date(`${form.onboardingDate}T${form.onboardingTime}`).toISOString();
-      }
-
-      const res = await fetch(`${API}/api/workflows/start`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          request,
-          trigger: "employee_onboarding",
-          name: form.name,
-          email: form.email,
-          role: form.role,
-          department: form.department,
-          scheduled_at,
-        }),
+      docs.forEach(doc => {
+        formData.append("files", doc);
       });
+
+      const res = await fetch(`${API}/api/onboarding/start-with-docs`, {
+        method: "POST",
+        body: formData,
+      });
+
       const data = await res.json();
       setShowModal(false);
       setForm({ name: "", email: "", role: "", department: "", onboardingDate: "", onboardingTime: "", triggerMode: "scheduled" });
+      setDocs([]);
       await loadWorkflows();
 
       if (data.status === "SCHEDULED") {
@@ -256,7 +257,7 @@ export default function OnboardingPage() {
           </div>
 
           {/* Trigger Mode */}
-          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 16 }}>
             <label style={{ color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: "0.85rem" }}>
               <input type="radio" name="triggerMode" value="scheduled" checked={form.triggerMode === "scheduled"}
                 onChange={() => setForm({ ...form, triggerMode: "scheduled" })} />
@@ -267,6 +268,72 @@ export default function OnboardingPage() {
                 onChange={() => setForm({ ...form, triggerMode: "immediate" })} />
               Trigger immediately
             </label>
+          </div>
+
+          <div style={{ marginBottom: "16px" }}>
+             <label className="form-label">Identity Documents (Optional)</label>
+             <div 
+               className="doc-upload-zone"
+               onClick={() => document.getElementById('onboarding-doc-upload')?.click()}
+               onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('drag-active'); }}
+               onDragLeave={(e) => { e.currentTarget.classList.remove('drag-active'); }}
+               onDrop={(e) => {
+                 e.preventDefault();
+                 e.currentTarget.classList.remove('drag-active');
+                 if (e.dataTransfer.files) {
+                   setDocs([...docs, ...Array.from(e.dataTransfer.files)]);
+                 }
+               }}
+               style={{ minHeight: "80px", padding: "16px" }}
+             >
+               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+                 <svg className="upload-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                   <polyline points="17 8 12 3 7 8"></polyline>
+                   <line x1="12" y1="3" x2="12" y2="15"></line>
+                 </svg>
+                 <span style={{ fontSize: "0.85rem", fontWeight: 500, color: "var(--text-primary)" }}>Drop documents here or click to browse</span>
+                 <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Supports Aadhaar, PAN, Passport (PDF, PNG, JPG)</span>
+               </div>
+             </div>
+             
+             <input 
+               id="onboarding-doc-upload"
+               type="file" 
+               multiple 
+               style={{ display: 'none' }}
+               onChange={(e) => {
+                 if (e.target.files) {
+                   setDocs([...docs, ...Array.from(e.target.files)]);
+                 }
+               }}
+             />
+             
+             {docs.length > 0 && (
+               <div style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "6px" }}>
+                 {docs.map((d, i) => (
+                   <div key={i} style={{ 
+                     fontSize: "0.80rem", background: "var(--bg-surface)", padding: "8px 12px", 
+                     borderRadius: "var(--radius-sm)", border: "1px solid var(--border)",
+                     display: "flex", justifyContent: "space-between", alignItems: "center"
+                   }}>
+                     <span style={{ color: "var(--text-bright)", display: "flex", alignItems: "center", gap: "8px" }}>
+                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                         <polyline points="14 2 14 8 20 8"></polyline>
+                       </svg>
+                       {d.name}
+                     </span>
+                     <button type="button" style={{ 
+                       background: "transparent", border: "none", color: "var(--text-muted)", 
+                       cursor: "pointer", display: "flex", alignItems: "center"
+                     }} onClick={() => setDocs(docs.filter((_, index) => index !== i))}>
+                       &times;
+                     </button>
+                   </div>
+                 ))}
+               </div>
+             )}
           </div>
 
           <div className="form-actions">
